@@ -1,6 +1,7 @@
 ---
 title: "🌱 Turning Data Into Nourishment 🌱"
 image: prof_pic_01.jpg
+toc: false
 about: 
   template: jolla
   image-shape: round
