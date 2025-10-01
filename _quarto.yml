@@ -16,7 +16,6 @@ format:
   html: 
     theme:
       light: morph
-      dark: darly
     css: styles.css
     toc: true
     page-layout: full
