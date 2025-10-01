@@ -3,9 +3,20 @@ project:
   output-dir: docs
 
 website:
-  title: "🌱 Turning Data Into Nourishment 🌱"
+  title: "Jay's Happy Place!"
   navbar:
     left:
       - href: index.qmd
         text: Home
-      # - about.qmd
+      - about.qmd
+      - href: resources.qmd
+        text: Resources
+
+format: 
+  html: 
+    theme:
+      light: morph
+      dark: darly
+    css: styles.css
+    toc: true
+    page-layout: full
