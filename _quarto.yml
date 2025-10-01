@@ -1,0 +1,13 @@
+project:
+  type: website
+  output-dir: docs
+
+website:
+  title: "🌱 Turning Data Into Nourishment 🌱"
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      # - about.qmd
+
+
