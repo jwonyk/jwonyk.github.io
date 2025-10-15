@@ -8,12 +8,15 @@ about:
   image-width: 17em
   links: 
     - text: linkedIn
+      icon: linkedin
       href: https://www.linkedin.com/in/jwonyk
       target: _blank
     - text: GitHub
+      icon: github-alt
       href: https://github.com/jwonyk
       target: _blank
     - text: Email
+      icon: envelope
       href: mailto:wonyoungkim@ucsb.edu
 ---
 
