@@ -4,8 +4,10 @@ project:
 
 website:
   title: "Jay's Happy Place!"
+  favicon: images/favicon.png
   navbar:
-    left:
+    title: false
+    right:
       - href: index.qmd
         text: Home
       - href: about.qmd
@@ -15,7 +17,7 @@ website:
 
 format: 
   html: 
-    theme: morph
-    css: styles.css
+    theme: styles.scss
     toc: true
     page-layout: full
+    mainfont: Nunito
