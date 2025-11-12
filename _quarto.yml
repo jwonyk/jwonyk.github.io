@@ -10,8 +10,8 @@ website:
     right:
       - href: index.qmd
         text: Home
-      - href: about.qmd
-        text: About
+      - about.qmd
+      - posts.qmd
       - href: resources.qmd
         text: Resources
 
