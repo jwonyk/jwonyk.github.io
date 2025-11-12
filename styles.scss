@@ -1,0 +1,54 @@
+/*-- scss:defaults --*/
+
+// Import google fonts
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap');
+
+// fonts
+$josefin: "Josefin Sans", sans-serif;
+
+// Colors
+$color1: #4A665A; // deep monstera green (primary)
+$color2: #6E8B7C; // muted leaf green
+$color3: #A5BDAA; // soft sage accent
+$color4: #DCE3D7; // pale mint background
+$color5: #2F3E35; // dark forest contrast
+$color6: #E8E5E0; // warm neutral (background or text contrast)
+$color7: #C9D8C5; // gentle highlight (secondary background)
+$color8: #8DAA91; // mid-tone supporting color
+
+// Define quarto variables
+$navbar-bg: $color6;   // warm neutral - navbar background
+$navbar-fg: $color1;   // deep monstera green - navbar text / icons
+$navbar-hl: $color2;   // muted leaf green - hover highlight
+$body-bg: $color4;     // pale mint - page background
+$body-color: $color5;  // dark forest - main text color
+$footer-bg: $color6;   // warm neutral - footer background
+$link-color: $color3;  // soft sage - link colo
+
+/*-- scss:rules --*/
+
+h1, h2, h3, h4 {
+  font-family: $josefin;
+}
+
+.navbar-brand img { 
+  max-height: 40px;
+  width: auto;
+}
+
+/* h1, h2 {
+  letter-spacing: 5px;
+  font-weight: 800;
+}
+
+.title {
+  color: violet;
+}
+
+.center-text {
+  text-align: center;
+}
+
+.orange-text {
+  color: orange;
+} */

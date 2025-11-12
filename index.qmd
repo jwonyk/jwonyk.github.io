@@ -1,6 +1,6 @@
 ---
 title: "🌱 Turning Data Into Nourishment 🌱"
-image: prof_pic_01.jpg
+image: images/prof_pic_01.jpg
 toc: false
 about: 
   template: jolla
@@ -12,7 +12,7 @@ about:
       href: https://www.linkedin.com/in/jwonyk
       target: _blank
     - text: GitHub
-      icon: github-alt
+      icon: github
       href: https://github.com/jwonyk
       target: _blank
     - text: Email
