@@ -1,6 +1,8 @@
 [
   {
     "listing": "/posts.html",
-    "items": []
+    "items": [
+      "/posts/ep-wildfire-analysis/index.html"
+    ]
   }
 ]
