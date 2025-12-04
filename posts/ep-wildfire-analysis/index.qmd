@@ -2,6 +2,7 @@
 title: "Eaton and Palisades Fires: A Satellite & Social Vulnerability Analysis"
 date: 2025-12-03
 categories: [MEDS, Python]
+image: output.png
 format:
   html:
     code-fold: false
