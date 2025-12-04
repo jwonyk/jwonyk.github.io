@@ -1,0 +1,325 @@
+---
+title: "Eaton and Palisades Fires: A Satellite & Social Vulnerability Analysis"
+date: 2025-12-03
+categories: [MEDS, Python]
+format:
+  html:
+    code-fold: false
+    embed-resources: true
+python: /opt/anaconda3/bin/python
+jupyter: eds220-env
+citation:
+  url: https://jwonyk.github.io/posts/ep-wildfire-analysis/
+bibliography: references.bib
+---
+
+**Github Repository**: https://github.com/jwonyk/ep-wildfire-analysis
+
+## About
+
+### Purpose
+
+In early 2025, two major Southern California wildfires, the Eaton and the Palisades Fire, burned across different parts of Los Angeles County. To better understand the impacts of these events, this project combines Landsat 8 satellite imagery with census-tract-level community indicators from the 2024 Environmental Justice Index (EJI). By integrating remote sensing and social vulnerability data, this analysis highlights both the visible physical burn patterns from space and the community characteristics of affected populations.
+
+### Highlights
+
+- Restore missing CRS from a Landsat NetCDF file
+- Create true and false-color images to visualize vegetation, burned areas, and the landscape condition
+- Overlay false-color imagery with the fire perimeter to illustrate aftermath of wildfire
+- Examined key vulnerability indicator: age
+- Compared the vulnerability profiles of communities affected by the Palisades and Eaton fires
+
+### About the data
+
+#### Fire Perimeter Dataset
+
+The fire perimeter dataset contains dissolved burn boundaries for the Eaton and Palisades fires. The original data comes from NIFC FIRIS (Fire Integrated Real-time Intelligence System). The data provides daily fire growth during the event of wildfire. The dataset is accessed through Los Angeles GeoHub and it is also accesscible from NIFC FIRIS public ArcGIS service.
+
+#### Landsat NetCDF Dataset
+
+The Landsat used in this analysis is a Landsat 8 Collection Level-2 Surface Reflectance product accessed through the Microsoft Planetary Computer Data Catalogue. The dataset includes multiple spectral bands stored in a NetCDF structure, CRS information, coordinate dimensions, and metadata. The spectral bands will assist to create true and false-color composite images for post-fire assessment.
+
+#### Environmental Justice Index Community Vulnerability Analysis
+This analysis uses the 2024 Environmental Justice Index (EJI) to identify and compare census tracts affected by the Eaton and Palisades fires, using spatial joins and clipping to the fire boundaries. After aligning datasets to a shared CRS, the intersecting tracts are examined using four key vulnerability indicators, such as age, vehicle access, poverty, and overall EJI score, to highlight differences in social and demographic vulnerability between the two burn areas.
+
+## Part 1 - Satellite Imagery Analysis 
+
+#### Setup for the Analysis 
+
+```{python}
+# Import packages for this project
+import os
+import numpy as np
+import pandas as pd
+import geopandas as gpd
+import xarray as xr
+import rioxarray
+import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
+
+
+# Set pandas to display all columns
+pd.set_option("display.max_columns", None)
+```
+
+```{python}
+# Load fire perimeter datasets
+eaton = gpd.read_file(os.path.join('data',
+                                      'fire_perimeters',
+                                      'Eaton_Perimeter_20250121.geojson'))
+
+palisades = gpd.read_file(os.path.join('data',
+                                      'fire_perimeters',
+                                      'Palisades_Perimeter_20250121.geojson'))
+```
+
+```{python}
+# Import NetCDF dataset
+landsat = xr.open_dataset("data/landsat8-2025-02-23-palisades-eaton.nc")
+```
+
+
+#### Restore Geospatial Information (CRS Recovery)
+The NetCDF file contains projection information inside the `spatial_ref` variable. `rio.crs` initially shows that no CRS is assigned. I will extract the WKT projection from `spatial_ref.crs_wkt` and write it back to the dataset using `rio.write_crs()`.
+
+```{python}
+# extract CRS from the spatial_ref variable
+crs_wkt = landsat.spatial_ref.crs_wkt
+
+# write CRS into rioxarray metadata
+landsat = landsat.rio.write_crs(crs_wkt)
+```
+
+#### True-Color Composite
+I will select the red, green, and blue bands and converted them into a 3-band array. The initial plot produces warnings due to bright cloud outliers, so I will use the `robust = True` parameter to ignore extreme values. At the end, I will identify and replace `NaN` values to create a clean final RGB image.
+
+```{python}
+rgb = landsat[['red', 'green', 'blue']].fillna(0)
+
+rgb_plot = (rgb.to_array().plot.imshow(
+    robust = True, 
+    figsize = (7, 7), 
+    add_colorbar = False))
+
+plt.title("True Color Composite (Landsat 8, Feb 23 2025)", fontsize = 14)
+plt.axis("off")
+plt.tight_layout()
+```
+
+#### False-Color Composite
+False color composites help highlight vegetation health and burn severity. I will plot a `SWIR2`, `NIR`, `Red` composite without creating new variables.
+
+```{python}
+(landsat[['swir22', 'nir08', 'red']].fillna(0)
+                                  .to_array()
+                                  .plot.imshow(
+                                    robust = True, 
+                                    figsize = (7,7),
+                                    add_colorbar = False))
+
+plt.title("False Color Composite (Landsat 8, Feb 23 2025)", fontsize = 14)
+plt.axis("off")
+plt.tight_layout()
+```
+
+#### Overlaying Fire perimeters
+
+```{python}
+# Create a figure and axes for plotting
+fig, ax = plt.subplots(figsize = (10, 10))
+
+# ---------------------------------------------------------------
+# BASE LAYER
+# ---------------------------------------------------------------
+
+# Plot the false color landsat composite (SWIR2, NIR, Red)
+(landsat[['swir22', 'nir08', 'red']].fillna(0)
+                                    .to_array()
+                                    .plot.imshow(ax = ax,
+                                    add_colorbar = False,
+                                    robust = True))
+
+# ---------------------------------------------------------------
+# FIRE PERIMETER OVERLAYS
+# ---------------------------------------------------------------
+
+# Plot Eaton Fire perimeter using the raster's CRS
+eaton.to_crs(landsat.rio.crs).plot(ax = ax,
+                                   edgecolor = 'yellow',
+                                   facecolor = 'none',
+                                   linewidth = 1.5)
+
+# Plot Palisades Fire perimeter using the raster's CRS
+palisades.to_crs(landsat.rio.crs).plot(ax = ax,
+                                   edgecolor = 'red',
+                                   facecolor = 'none',
+                                   linewidth = 1.5)
+
+# ---------------------------------------------------------------
+# CUSTOM LEGEND PATCHES
+# ---------------------------------------------------------------
+
+# Create a custom label bubble for Eaton
+eaton_patch = mpatches.Patch(facecolor = 'none',
+                             edgecolor = 'yellow',
+                             linewidth = 2.5,
+                             label = 'Eaton Fire')
+
+# Create a custom label bubble for Palisades
+palisades_patch = mpatches.Patch(facecolor = 'none',
+                             edgecolor = 'red',
+                             linewidth = 2.5,
+                             label = 'Palisades Fire')
+
+# Display a legend identifying each fire perimeter
+ax.legend(handles = [eaton_patch, palisades_patch],
+          loc = 'upper left')
+
+# ---------------------------------------------------------------
+# ON-MAP TEXT LABELS
+# ---------------------------------------------------------------
+
+# Eaton label (top right)
+ax.text(0.75, 0.80,
+        'Eaton Fire',
+        transform = ax.transAxes,
+        fontsize = 12,
+        color = 'yellow',
+        fontweight = 'bold',
+        bbox = dict(boxstyle = 'round',
+                    facecolor = 'black',
+                    alpha = 0.5))
+
+# Palisades label (bottom left)
+ax.text(0.15, 0.20,
+        'Palisades Fire',
+        transform = ax.transAxes,
+        fontsize = 12,
+        color = 'red',
+        fontweight = 'bold',
+        bbox = dict(boxstyle = 'round',
+                    facecolor = 'white',
+                    alpha = 0.75))
+
+# ---------------------------------------------------------------
+# TITLE AND LAYOUT
+# ---------------------------------------------------------------
+
+# Label the map to clarify the image and overlays
+ax.set_title(("False Color Landsat (Feb 23, 2025) ",
+             "with Fire Perimeters (Jan 21, 2025)"),
+             fontsize = 13)
+
+# Remove both axis ticks
+ax.set_xticks([])
+ax.set_yticks([])
+
+# Replace x and y label
+ax.set_xlabel("Easting (meters)", fontsize = 12)
+ax.set_ylabel("Northing (meters)", fontsize = 12)
+
+# Improve layout so elements do not overlap
+plt.tight_layout()
+```
+
+#### Figure Description
+This map shows a false color Landsat composite with SWIR2, NIR, Red bands over the perimeters for both Eaton and Palisade fires. In this false color image, shortwave infrared (SWIR2) and near-infraed(NIR) energy responses highlight differences between healthy vegetation, burned, and developed areas. Burned area appear in different color compare to healthy vegetation areas are bright green. Overlaying the fire perimeter boundaries on top of the images shows the visual comparison of burn patterns.
+
+## Part 2 - Social Vulnerability
+The 2024 Environmental Justice Index (EJI) dataset examined community characteristics in the census tracts that intersected each fire. All data were converted to a shared CRS and spatially joined to the fire perimeters using `geopandas.sjoin()`.
+
+To focus on social and demographic factors relevant to wildfire response, following indicator was selected:
+- E_AGE65: Percent population aged 65+
+
+#### Setup for the Analysis
+
+```{python}
+# Import library that is necessary for this analysis
+import contextily as ctx
+
+# EJI data (geodatabase)
+eji = gpd.read_file("data/EJI_2024_California/EJI_2024_California.gdb")
+
+# Reproject
+eji = eji.to_crs(epsg = 4326)
+```
+
+#### Spatial Join - Identify Census Tract intersecting Each Fire
+To determine which communities were affected, I performed a spatial join between the EJI census tracts and each fire perimeter. This identifies all tracts whose boundaries intersect the Eaton or Palisades fire footprint.
+
+```{python}
+# Spatial join
+census_within_palisades = gpd.sjoin(eji, palisades, how = "inner", predicate = "intersects")
+census_within_eaton = gpd.sjoin(eji, eaton, how = "inner", predicate = "intersects")
+
+# Check how many tracts there is
+print("Palisades tracts:", len(census_within_palisades))
+print("Eaton tracts:", len(census_within_eaton))
+```
+
+#### Polygon Clipping
+To focus only on the census-tract areas actually affected by each fire, I clipped the EJI tracts to the Eaton and Palisades fire boundaries. This trims the polygons to the exact burned footprint and ensures the demographic analysis reflects only the portions of each tract that were inside the fire perimeter.
+
+```{python}
+# Clip EJI census tracts to each fire perimeter
+palisades_clipped = gpd.clip(census_within_palisades, palisades)
+eaton_clipped = gpd.clip(census_within_eaton, eaton)
+```
+
+#### Plot Age 65+ for Both Fire Areas
+After clipping the census tracts to each fire boundary, I mapped the percentage of residents aged 65 and older using a shared color range. This visualization illustrates how the elderly population is distributed within each burn area and highlights differences between the communities affected by the two fires.
+
+```{python}
+# Assign name for the EJI column name
+eji_variable = 'E_AGE65'
+
+# Find common min/max for legend range
+vmin = min(census_within_palisades[eji_variable].min(), 
+           census_within_eaton[eji_variable].min())
+
+vmax = max(census_within_palisades[eji_variable].max(), 
+           census_within_eaton[eji_variable].max())
+
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize = (7, 7))
+
+# Plot census tracts within Palisades perimeter
+census_within_palisades.plot(
+    column = eji_variable,
+    vmin = vmin, vmax = vmax,
+    legend = False,
+    ax = ax1)
+ax1.set_title('Palisades Fire Area', fontsize = 25)
+ax1.axis('off')
+
+# Plot census tracts within Eaton perimeter
+census_within_eaton.plot(
+    column = eji_variable,
+    vmin = vmin, vmax = vmax,
+    legend = False,
+    ax = ax2)
+ax2.set_title('Eaton Fire Area', fontsize = 25)
+ax2.axis('off')
+
+# Add overall title
+fig.suptitle('Age 65+ - Fire Areas Comparison', fontsize = 45)
+
+# Add shared colorbar at the bottom
+sm = plt.cm.ScalarMappable(norm = plt.Normalize(vmin = vmin, vmax = vmax))
+cbar_ax = fig.add_axes([0.25, 0.08, 0.5, 0.02])  # [left, bottom, width, height]
+cbar = fig.colorbar(sm, cax = cbar_ax, orientation = 'horizontal')
+cbar.set_label('Population Age Over 65')
+
+plt.show()
+```
+
+#### Figure Description
+Clipping the EJI census tracts to each fire boundary refines the analysis by showing only the precise areas affected by the Eaton and Palisades fires. When mapped, the clipped tracts reveal that each fire intersects a different set of communities. Using the Age 65+ indicator, the Palisades area generally shows a higher proportion of older adults, while the Eaton area displays lower but more variable elderly populations. This difference highlights how the fires impacted communities with distinct demographic vulnerabilities.
+
+## Reference
+
+- Los Angeles GeoHub / NIFC FIRIS. (2025). _Palisades–Eaton dissolved fire perimeters_ [data file]. Available: https://geohub.lacity.org/maps/ad51845ea5fb4eb483bc2a7c38b2370c/about. [Accessed: Nov. 15, 2025]
+
+- U.S. Geological Survey. _Landsat Collection 2 Level-2 Surface Reflectance (Microsoft Planetary Computer version)_ [data file]. Available: https://planetarycomputer.microsoft.com/dataset/landsat-c2-l2. [Accessed: Nov. 15, 2025]
+
+- U.S. Department of Health and Human Services. (2024). _Environmental Justice Index (EJI), 2024 – California Census Tract Data_ [data file]. Available: https://www.atsdr.cdc.gov/place-health/php/eji/eji-data-download.html. [Accessed: Nov. 21, 2025]
+
