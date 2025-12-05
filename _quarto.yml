@@ -1,22 +1,20 @@
 project:
   type: website
   output-dir: docs
-
 website:
   title: "Jay's Happy Place!"
   favicon: images/favicon.png
   navbar:
     title: false
     right:
-      - href: index.qmd
-        text: Home
-      - href: about.qmd
-        text: About
-      - href: posts.qmd
-        text: Blog
-      - href: resources.qmd
-        text: Resources
-
+      - text: Home
+        href: index.qmd
+      - text: About
+        href: about.qmd
+      - text: Blog
+        href: posts.qmd
+      - text: Resources
+        href: resources.qmd
 format: 
   html: 
     theme: styles.scss
