@@ -2,7 +2,7 @@
 title: "Eaton and Palisades Fires: A Satellite & Social Vulnerability Analysis"
 date: 2025-12-03
 categories: [MEDS, Python]
-image: output.png
+image: ep_fire.jpg
 format:
   html:
     code-fold: false
@@ -324,3 +324,4 @@ Clipping the EJI census tracts to each fire boundary refines the analysis by sho
 
 - U.S. Department of Health and Human Services. (2024). _Environmental Justice Index (EJI), 2024 – California Census Tract Data_ [data file]. Available: https://www.atsdr.cdc.gov/place-health/php/eji/eji-data-download.html. [Accessed: Nov. 21, 2025]
 
+- Wikimedia Commons. (2025). _2025 Southern California Fires and the United States Forest Service (USFS) – Taskforce 1600 at the Palisades Fire (54264940069).jpg_ [image file]. Available: https://commons.wikimedia.org/wiki/File:2025_Southern_California_fires_and_the_United_States_Forest_Service_(USFS)_-_Taskforce_1600_at_the_Palisades_Fire_(54264940069).jpg. [Accessed: Dec. 4, 2025]
