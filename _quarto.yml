@@ -1,6 +1,7 @@
 project:
   type: website
   output-dir: docs
+
 website:
   title: "Jay's Happy Place!"
   favicon: images/favicon.png
@@ -15,6 +16,7 @@ website:
         href: posts.qmd
       - text: Resources
         href: resources.qmd
+
 format: 
   html: 
     theme: styles.scss

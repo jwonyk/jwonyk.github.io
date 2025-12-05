@@ -12,6 +12,8 @@ jupyter: eds220-env
 citation:
   url: https://jwonyk.github.io/posts/ep-wildfire-analysis/
 bibliography: references.bib
+execute: 
+  freeze: true
 ---
 
 **Github Repository**: https://github.com/jwonyk/ep-wildfire-analysis

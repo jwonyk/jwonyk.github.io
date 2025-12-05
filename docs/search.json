@@ -95,7 +95,7 @@
     "href": "posts/crop-water-gamma/index.html#clear-the-environment-and-load-libraries",
     "title": "How Crop Type and Climate Zone Influence Agricultural Water Use in California",
     "section": "Clear the Environment and Load Libraries",
-    "text": "Clear the Environment and Load Libraries\n\n# Clear the environment\nrm(list = ls())\n\n# Load in libraries\npacman::p_load(tidyverse, dplyr, here, readxl, pals, broom, knitr,\n               janitor, dagitty, ggdag, ggplot2, kableExtra)\n\n\nThe downloaded binary packages are in\n    /var/folders/rq/nz4_dfz56932cn8khybs1jm80000gn/T//Rtmp3Yqs8h/downloaded_packages\n\n\n\nThe downloaded binary packages are in\n    /var/folders/rq/nz4_dfz56932cn8khybs1jm80000gn/T//Rtmp3Yqs8h/downloaded_packages"
+    "text": "Clear the Environment and Load Libraries\n\n# Clear the environment\nrm(list = ls())\n\n# Load in libraries\npacman::p_load(tidyverse, dplyr, here, readxl, pals, broom, knitr,\n               janitor, dagitty, ggdag, ggplot2, kableExtra)"
   },
   {
     "objectID": "posts/crop-water-gamma/index.html#load-and-explore-data",
