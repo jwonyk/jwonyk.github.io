@@ -19,13 +19,10 @@ execute:
 **Github Repository**: https://github.com/jwonyk/ep-wildfire-analysis
 
 ## About
-
 ### Purpose
-
 In early 2025, two major Southern California wildfires, the Eaton and the Palisades Fire, burned across different parts of Los Angeles County. To better understand the impacts of these events, this project combines Landsat 8 satellite imagery with census-tract-level community indicators from the 2024 Environmental Justice Index (EJI). By integrating remote sensing and social vulnerability data, this analysis highlights both the visible physical burn patterns from space and the community characteristics of affected populations.
 
 ### Highlights
-
 - Restore missing CRS from a Landsat NetCDF file
 - Create true and false-color images to visualize vegetation, burned areas, and the landscape condition
 - Overlay false-color imagery with the fire perimeter to illustrate aftermath of wildfire
@@ -33,22 +30,17 @@ In early 2025, two major Southern California wildfires, the Eaton and the Palisa
 - Compared the vulnerability profiles of communities affected by the Palisades and Eaton fires
 
 ### About the data
-
 #### Fire Perimeter Dataset
-
 The fire perimeter dataset contains dissolved burn boundaries for the Eaton and Palisades fires. The original data comes from NIFC FIRIS (Fire Integrated Real-time Intelligence System). The data provides daily fire growth during the event of wildfire. The dataset is accessed through Los Angeles GeoHub and it is also accesscible from NIFC FIRIS public ArcGIS service.
 
 #### Landsat NetCDF Dataset
-
 The Landsat used in this analysis is a Landsat 8 Collection Level-2 Surface Reflectance product accessed through the Microsoft Planetary Computer Data Catalogue. The dataset includes multiple spectral bands stored in a NetCDF structure, CRS information, coordinate dimensions, and metadata. The spectral bands will assist to create true and false-color composite images for post-fire assessment.
 
 #### Environmental Justice Index Community Vulnerability Analysis
 This analysis uses the 2024 Environmental Justice Index (EJI) to identify and compare census tracts affected by the Eaton and Palisades fires, using spatial joins and clipping to the fire boundaries. After aligning datasets to a shared CRS, the intersecting tracts are examined using four key vulnerability indicators, such as age, vehicle access, poverty, and overall EJI score, to highlight differences in social and demographic vulnerability between the two burn areas.
 
 ## Part 1 - Satellite Imagery Analysis 
-
 #### Setup for the Analysis 
-
 ```{python}
 # Import packages for this project
 import os
@@ -126,7 +118,6 @@ plt.tight_layout()
 ```
 
 #### Overlaying Fire perimeters
-
 ```{python}
 # Create a figure and axes for plotting
 fig, ax = plt.subplots(figsize = (10, 10))
@@ -209,8 +200,7 @@ ax.text(0.15, 0.20,
 # ---------------------------------------------------------------
 
 # Label the map to clarify the image and overlays
-ax.set_title(("False Color Landsat (Feb 23, 2025) ",
-             "with Fire Perimeters (Jan 21, 2025)"),
+ax.set_title(("False Color Landsat (Feb 23, 2025) with Fire Perimeters (Jan 21, 2025)"),
              fontsize = 13)
 
 # Remove both axis ticks
@@ -235,7 +225,6 @@ To focus on social and demographic factors relevant to wildfire response, follow
 - E_AGE65: Percent population aged 65+
 
 #### Setup for the Analysis
-
 ```{python}
 # Import library that is necessary for this analysis
 import contextily as ctx
@@ -319,7 +308,6 @@ plt.show()
 Clipping the EJI census tracts to each fire boundary refines the analysis by showing only the precise areas affected by the Eaton and Palisades fires. When mapped, the clipped tracts reveal that each fire intersects a different set of communities. Using the Age 65+ indicator, the Palisades area generally shows a higher proportion of older adults, while the Eaton area displays lower but more variable elderly populations. This difference highlights how the fires impacted communities with distinct demographic vulnerabilities.
 
 ## Reference
-
 - Los Angeles GeoHub / NIFC FIRIS. (2025). _Palisades–Eaton dissolved fire perimeters_ [data file]. Available: https://geohub.lacity.org/maps/ad51845ea5fb4eb483bc2a7c38b2370c/about. [Accessed: Nov. 15, 2025]
 
 - U.S. Geological Survey. _Landsat Collection 2 Level-2 Surface Reflectance (Microsoft Planetary Computer version)_ [data file]. Available: https://planetarycomputer.microsoft.com/dataset/landsat-c2-l2. [Accessed: Nov. 15, 2025]
