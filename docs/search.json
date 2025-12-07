@@ -1,5 +1,124 @@
 [
   {
+    "objectID": "resources.html",
+    "href": "resources.html",
+    "title": "All my favorite Resources!",
+    "section": "",
+    "text": "This is an h1 element.\n\n\nThis is an h1 element with the title class\n\n\nThis paragraph is orange\n\n\nThis text is centered\n\n\nThis text is both centered and orange\n\n\nHere’s where I’m describing something fun that I enjoy doing.\nHere’s a full line\n\nHere’s one line\nHere’s another line\n\n\nThis is centered"
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
+    "section": "",
+    "text": "Here is where I describe what I do professionally"
+  },
+  {
+    "objectID": "about.html#what-i-do-for-work",
+    "href": "about.html#what-i-do-for-work",
+    "title": "About",
+    "section": "",
+    "text": "Here is where I describe what I do professionally"
+  },
+  {
+    "objectID": "about.html#what-i-do-for-fun",
+    "href": "about.html#what-i-do-for-fun",
+    "title": "About",
+    "section": "What I do for fun",
+    "text": "What I do for fun\nGive the people what they want! Something fun!"
+  },
+  {
+    "objectID": "posts/biodiversity-intactness-index-change/index.html",
+    "href": "posts/biodiversity-intactness-index-change/index.html",
+    "title": "Biodiversity Intactness Index Change in the Phoenix Subdivision (2017–2020)",
+    "section": "",
+    "text": "GitHub repository: https://github.com/jwonyk/biodiversity-intactness-index-change"
+  },
+  {
+    "objectID": "posts/biodiversity-intactness-index-change/index.html#about",
+    "href": "posts/biodiversity-intactness-index-change/index.html#about",
+    "title": "Biodiversity Intactness Index Change in the Phoenix Subdivision (2017–2020)",
+    "section": "About",
+    "text": "About\n\nPurpose\nThis repository contains the analysis for a project examining changes in the Biodiversity Intactness Index (BII) in the Phoenix subdivision of Maricopa County, AZ, from 2017 to 2020. Using 100 m BII data, the project explores how rapid urban growth may be affecting local biodiversity.\n\n\nHighlights\n\nExtracting and clipping BII rasters for 2017 and 2020 to the Phoenix subdivision boundary.\nCalculating the percentage of the subdivision area with BII ≥ 0.75 for both years.\nMapping areas that lost high BII values (≥ 0.75) between 2017 and 2020.\nSituating the Phoenix subdivision within its broader geographic and urban context using additional vector/raster data and basemaps.\n\n\n\nAbout the data\n\nBiodiversity Intactness Index (BII): BII data are taken from the io-biodiversity collection on the Microsoft Planetary Computer, which provides global 100 m BII projections for 2017–2020. For this project, the 2017 and 2020 rasters covering the Phoenix subdivision (bounding box: [-112.826843, 32.974108, -111.184387, 33.863574]) are loaded and then clipped to the Phoenix subdivision boundary to calculate metrics such as the percentage of area with BII ≥ 0.75.\nPhoenix subdivision boundary: The Phoenix subdivision boundary comes from the Census County Subdivision TIGER/Line shapefiles for Arizona. This polygon defines the analysis area, is used to clip the BII rasters, and provides geographic context for mapping within Maricopa County and the surrounding region.\n\n\n\nReferences\n\nMicrosoft Planetary Computer, Biodiversity Intactness Index (BII) Time Series, io-biodiversity Collection, 2017–2020 [data file]. Available from the Microsoft Planetary Computer STAC catalog. [Accessed: Dec. 1, 2025]\nU.S. Census Bureau, County Subdivision Shapefiles, Arizona (TIGER/Line) [data file]. Available from the U.S. Census Bureau TIGER/Line shapefile download portal. [Accessed: Dec. 1, 2025]"
+  },
+  {
+    "objectID": "posts/biodiversity-intactness-index-change/index.html#setup",
+    "href": "posts/biodiversity-intactness-index-change/index.html#setup",
+    "title": "Biodiversity Intactness Index Change in the Phoenix Subdivision (2017–2020)",
+    "section": "Setup",
+    "text": "Setup\nLoad required Python packages and configure the workspace.\n\n# Load in all necessary packages\nimport geopandas as gpd\nimport xarray as xr\nimport rioxarray as rioxr\n\nimport matplotlib.pyplot as plt\nimport matplotlib.patches as mpatches\nfrom matplotlib.colors import ListedColormap\n\nimport numpy as np\nimport contextily as ctx\nfrom shapely.geometry import box\n\nfrom pystac_client import Client  # To access STAC catalogs\nimport planetary_computer as pc  # To sign items from the MPC STAC catalog"
+  },
+  {
+    "objectID": "posts/biodiversity-intactness-index-change/index.html#read-in-data",
+    "href": "posts/biodiversity-intactness-index-change/index.html#read-in-data",
+    "title": "Biodiversity Intactness Index Change in the Phoenix Subdivision (2017–2020)",
+    "section": "Read in Data",
+    "text": "Read in Data\nImport the Census TIGER/Line shapefile and filter to the Phoenix subdivision.\n\n# Load all county subdivisions for AZ\nsubdivisions = gpd.read_file('data/tl_2020_04_cousub/tl_2020_04_cousub.shp')  \n\n# Filter to Phoenix subdivision\nphoenix_subdivisions = subdivisions[subdivisions['NAME'] == 'Phoenix'].to_crs(epsg = 3857)"
+  },
+  {
+    "objectID": "posts/biodiversity-intactness-index-change/index.html#access",
+    "href": "posts/biodiversity-intactness-index-change/index.html#access",
+    "title": "Biodiversity Intactness Index Change in the Phoenix Subdivision (2017–2020)",
+    "section": "Access",
+    "text": "Access\nQuery the Microsoft Planetary Computer STAC API for 2017 and 2020 BII rasters. We use the Client function from the pystac_client package to access the catalog:\n\n# Set bounding box\nbbox = [-112.826843, 32.974108, -111.184387, 33.863574]\n\n# Access STAC catalog\ncatalog = Client.open(\"https://planetarycomputer.microsoft.com/api/stac/v1\")\n\n# Search BII raster for 2017 & 2020\nsearch_2017 = catalog.search(\n    collections = ['io-biodiversity'],\n    bbox = bbox,\n    datetime = '2017-01-01/2017-12-31')\n\nsearch_2020 = catalog.search(\n    collections = ['io-biodiversity'],\n    bbox = bbox,\n    datetime = '2020-01-01/2020-12-31')\n\n# Extract matching item from each search\nitem_2017 = list(search_2017.items())[0]\nitem_2020 = list(search_2020.items())[0]\n\n# Find the asset key\nitem_2017.assets.keys(), item_2020.assets.keys()\n\n(dict_keys(['data', 'tilejson', 'rendered_preview']),\n dict_keys(['data', 'tilejson', 'rendered_preview']))"
+  },
+  {
+    "objectID": "posts/biodiversity-intactness-index-change/index.html#read-in-bii-rasters",
+    "href": "posts/biodiversity-intactness-index-change/index.html#read-in-bii-rasters",
+    "title": "Biodiversity Intactness Index Change in the Phoenix Subdivision (2017–2020)",
+    "section": "Read in BII Rasters",
+    "text": "Read in BII Rasters\nOpen the raster assets into xarray objects and inspect dimensions and CRS.\n\n# Access the GeoTIFF from STAC\nasset_2017 = pc.sign(item_2017.assets['data'])\nasset_2020 = pc.sign(item_2020.assets['data'])\n\n# Read in raster to xarray DataArrays to clip and mask\nbii_2017 = rioxr.open_rasterio(asset_2017.href).squeeze()\nbii_2020 = rioxr.open_rasterio(asset_2020.href).squeeze()\n\n# Inspect the data\nbii_2017, bii_2017.shape, bii_2017.rio.crs\n\n(&lt;xarray.DataArray (y: 7992, x: 7992)&gt; Size: 255MB\n [63872064 values with dtype=float32]\n Coordinates:\n     band         int64 8B 1\n   * x            (x) float64 64kB -115.4 -115.4 -115.4 ... -108.2 -108.2 -108.2\n   * y            (y) float64 64kB 34.74 34.74 34.74 34.74 ... 27.57 27.57 27.57\n     spatial_ref  int64 8B 0\n Attributes:\n     AREA_OR_POINT:  Area\n     scale_factor:   1.0\n     add_offset:     0.0,\n (7992, 7992),\n CRS.from_wkt('GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AXIS[\"Latitude\",NORTH],AXIS[\"Longitude\",EAST],AUTHORITY[\"EPSG\",\"4326\"]]'))"
+  },
+  {
+    "objectID": "posts/biodiversity-intactness-index-change/index.html#clip-rasters-to-phoenix-subdivision",
+    "href": "posts/biodiversity-intactness-index-change/index.html#clip-rasters-to-phoenix-subdivision",
+    "title": "Biodiversity Intactness Index Change in the Phoenix Subdivision (2017–2020)",
+    "section": "Clip Rasters to Phoenix Subdivision",
+    "text": "Clip Rasters to Phoenix Subdivision\nMatch CRS between raster and vector data, then clip the rasters to the subdivision boundary.\n\n# Match CRS before clipping\nphoenix_subdivisions_projection = phoenix_subdivisions.to_crs(bii_2017.rio.crs)\n\n# Clip the Phoenix subdivision to reduce size and keep only pixels inside\nbii_2017_clip = (bii_2017.rio.clip_box(*phoenix_subdivisions_projection.total_bounds)\n                         .rio.clip(phoenix_subdivisions_projection.geometry, phoenix_subdivisions_projection.crs))\nbii_2020_clip = (bii_2020.rio.clip_box(*phoenix_subdivisions_projection.total_bounds)\n                         .rio.clip(phoenix_subdivisions_projection.geometry, phoenix_subdivisions_projection.crs))"
+  },
+  {
+    "objectID": "posts/biodiversity-intactness-index-change/index.html#mapping-phoenix-subdivision",
+    "href": "posts/biodiversity-intactness-index-change/index.html#mapping-phoenix-subdivision",
+    "title": "Biodiversity Intactness Index Change in the Phoenix Subdivision (2017–2020)",
+    "section": "Mapping Phoenix Subdivision",
+    "text": "Mapping Phoenix Subdivision\nPlot the Phoenix subdivision boundary over a basemap\n\n# Create figure\nfig, ax = plt.subplots(1, 1, figsize = (14, 12))\n\n# Reproject to Web Mercator for contextily\nphoenix_subdivisions_web = phoenix_subdivisions_projection.to_crs(epsg = 3857)\n\n# Plot the subdivision boundary\nphoenix_subdivisions_web.boundary.plot(ax = ax, edgecolor = 'red', linewidth = 5)\n\n# Add basemap\nctx.add_basemap(ax, source = ctx.providers.OpenStreetMap.Mapnik)\n\n# Add title and clean ticks\nax.set_title('Phoenix Subdivision', fontsize = 20, fontweight = 'bold')\nax.set_xticks([])\nax.set_yticks([])\n\n# Improve layout so elements do not overlap\nplt.tight_layout()\nplt.show()"
+  },
+  {
+    "objectID": "posts/biodiversity-intactness-index-change/index.html#calculate-percentage-of-area-with-bii",
+    "href": "posts/biodiversity-intactness-index-change/index.html#calculate-percentage-of-area-with-bii",
+    "title": "Biodiversity Intactness Index Change in the Phoenix Subdivision (2017–2020)",
+    "section": "Calculate Percentage of Area With BII",
+    "text": "Calculate Percentage of Area With BII\nCompute the proportion of valid pixels in 2017 and 2020 exceeding the threshold (0.75)\n\n# Threshold representing high biodiversity intactness\nthreshold = 0.75\n\n# Boolean masks identify pixels meeting the threshold\nhigh_2017 = bii_2017_clip &gt;= threshold\nhigh_2020 = bii_2020_clip &gt;= threshold\n\n# Identify pixels inside the polygon with valid raster data\nvalid_2017 = ~bii_2017_clip.isnull()\nvalid_2020 = ~bii_2020_clip.isnull()\n\n# Count qualifying pixels and total valid pixels\nn_high_2017 = (high_2017 & valid_2017).sum().item()\nn_total_2017 = valid_2017.sum().item()\n\nn_high_2020 = (high_2020 & valid_2020).sum().item()\nn_total_2020 = valid_2020.sum().item()\n\n# Compute percentages\npct_2017 = (n_high_2017 / n_total_2017) * 100\npct_2020 = (n_high_2020 / n_total_2020) * 100\n\nprint(f\"Percentage of of area of the Phoenix subdivision with a BII of at least 0.75 in 2017: {pct_2017:.2f}\")\nprint(f\"Percentage of of area of the Phoenix subdivision with a BII of at least 0.75 in 2020: {pct_2020:.2f}\")\n\nPercentage of of area of the Phoenix subdivision with a BII of at least 0.75 in 2017: 7.13\nPercentage of of area of the Phoenix subdivision with a BII of at least 0.75 in 2020: 6.49"
+  },
+  {
+    "objectID": "posts/biodiversity-intactness-index-change/index.html#result-summary",
+    "href": "posts/biodiversity-intactness-index-change/index.html#result-summary",
+    "title": "Biodiversity Intactness Index Change in the Phoenix Subdivision (2017–2020)",
+    "section": "Result Summary",
+    "text": "Result Summary\nUsing a threshold (BII ≥ 0.75) to test the high biodiversity intactness, the result in shown in the followings: 7.13% of the Phoenix subdivision met this criteria, but it dropped in 2020 to only 6.49%. The degradation over the three-year period shows the portion of subdivision with ongoing pressure on habitats."
+  },
+  {
+    "objectID": "posts/biodiversity-intactness-index-change/index.html#identify-areas-that-lost-high-bii",
+    "href": "posts/biodiversity-intactness-index-change/index.html#identify-areas-that-lost-high-bii",
+    "title": "Biodiversity Intactness Index Change in the Phoenix Subdivision (2017–2020)",
+    "section": "Identify Areas That Lost High BII",
+    "text": "Identify Areas That Lost High BII\nCreate a Boolean mask showing pixels that were BII ≥0.75 in 2017 but not in 2020.\n\n# Identify pixels that no longer meet the threshold in 2020\nlost_high_bii = (high_2017 & valid_2017) & ~(high_2020 & valid_2020)"
+  },
+  {
+    "objectID": "posts/biodiversity-intactness-index-change/index.html#mapping-lost-high-bii-areas",
+    "href": "posts/biodiversity-intactness-index-change/index.html#mapping-lost-high-bii-areas",
+    "title": "Biodiversity Intactness Index Change in the Phoenix Subdivision (2017–2020)",
+    "section": "Mapping Lost High-BII Areas",
+    "text": "Mapping Lost High-BII Areas\nOverlay lost-BII pixels (in red) on the 2020 BII raster.\n\n# Create figure\nfig, ax = plt.subplots(figsize = (10, 10))\n\n# Ensure `lost_high_bii` is float mask\nlost_high_bii_mask = lost_high_bii.where(lost_high_bii, other = np.nan)\n\n# ---------------------------------------------------------------\n# Plot BII 2020 as the background \n# ---------------------------------------------------------------\n\nbii_plot = bii_2020_clip.plot(ax = ax, cmap = 'Greens',\n                              vmin = 0.1, vmax = 0.88,\n                              add_colorbar = False)\n\n# ---------------------------------------------------------------\n# Overlay lost high-BII areas in red (fixed red color \n# ---------------------------------------------------------------\n\nlost_high_bii_mask.plot(ax = ax, cmap = ListedColormap(['red']), \n                   alpha = 1.0, add_colorbar = False)\n\n# ---------------------------------------------------------------\n# Add Phoenix subdivision outline\n# ---------------------------------------------------------------\n\nphoenix_subdivisions_projection.boundary.plot(ax = ax, color = 'black', linewidth = 1)\n\n# ---------------------------------------------------------------\n#  Add title\n# ---------------------------------------------------------------\n\nax.set_title('Biodiversity Intactness Index (BII)\\nPhoenix Subdivision',\n             fontsize = 16, fontweight = 'bold', pad = 20)\n\nax.axis('off')\n\n# ---------------------------------------------------------------\n# Add colorbar for BII 2020\n# ---------------------------------------------------------------\n\ncbar = plt.colorbar(bii_plot, ax = ax, orientation = 'horizontal', \n                    fraction = 0.046, pad = 0.07)\ncbar.set_label('BII for 2020', fontsize = 12)\n\n# ---------------------------------------------------------------\n# Add red legend entry for lost high-BII pixels\n# ---------------------------------------------------------------\n\nlost_patch = mpatches.Patch(color = 'red', \n                            label = 'Area with BII ≥ 0.75 lost from 2017 to 2020')\n\nax.legend(handles = [lost_patch], \n          loc = 'lower center', \n          bbox_to_anchor = (0.5, -0.12))\n\nplt.show()"
+  },
+  {
+    "objectID": "posts/biodiversity-intactness-index-change/index.html#interpretation-of-bii-change-2017---2020",
+    "href": "posts/biodiversity-intactness-index-change/index.html#interpretation-of-bii-change-2017---2020",
+    "title": "Biodiversity Intactness Index Change in the Phoenix Subdivision (2017–2020)",
+    "section": "Interpretation of BII Change (2017 - 2020)",
+    "text": "Interpretation of BII Change (2017 - 2020)\nThe map illutrates how biodiversity conditions changed in the Phoenix subdivision between 2017 and 2020. The map shows 2020 BII values in green and highlighted with red in the areas where there has been high biodiversity intactness (BII ≥ 0.75) which no longer meet that threshold. There are larger amount of concentrations of biodiversity loss in the northeastern part of the subdivision while smaller pockets of decline is occuring in the southern and southeastern regions. The urbanization in the area may be correlated reducing local wild habitat and loss of biodiversity."
+  },
+  {
     "objectID": "posts/ep-wildfire-analysis/index.html",
     "href": "posts/ep-wildfire-analysis/index.html",
     "title": "Eaton and Palisades Fires: A Satellite & Social Vulnerability Analysis",
@@ -33,13 +152,6 @@
     "title": "Eaton and Palisades Fires: A Satellite & Social Vulnerability Analysis",
     "section": "Reference",
     "text": "Reference\n\nLos Angeles GeoHub / NIFC FIRIS. (2025). Palisades–Eaton dissolved fire perimeters [data file]. Available: https://geohub.lacity.org/maps/ad51845ea5fb4eb483bc2a7c38b2370c/about. [Accessed: Nov. 15, 2025]\nU.S. Geological Survey. Landsat Collection 2 Level-2 Surface Reflectance (Microsoft Planetary Computer version) [data file]. Available: https://planetarycomputer.microsoft.com/dataset/landsat-c2-l2. [Accessed: Nov. 15, 2025]\nU.S. Department of Health and Human Services. (2024). Environmental Justice Index (EJI), 2024 – California Census Tract Data [data file]. Available: https://www.atsdr.cdc.gov/place-health/php/eji/eji-data-download.html. [Accessed: Nov. 21, 2025]\nWikimedia Commons. (2025). 2025 Southern California Fires and the United States Forest Service (USFS) – Taskforce 1600 at the Palisades Fire (54264940069).jpg [image file]. Available: https://commons.wikimedia.org/wiki/File:2025_Southern_California_fires_and_the_United_States_Forest_Service_(USFS)_-Taskforce_1600_at_the_Palisades_Fire(54264940069).jpg. [Accessed: Dec. 4, 2025]"
-  },
-  {
-    "objectID": "resources.html",
-    "href": "resources.html",
-    "title": "All my favorite Resources!",
-    "section": "",
-    "text": "This is an h1 element.\n\n\nThis is an h1 element with the title class\n\n\nThis paragraph is orange\n\n\nThis text is centered\n\n\nThis text is both centered and orange\n\n\nHere’s where I’m describing something fun that I enjoy doing.\nHere’s a full line\n\nHere’s one line\nHere’s another line\n\n\nThis is centered"
   },
   {
     "objectID": "posts/crop-water-gamma/index.html",
@@ -126,116 +238,11 @@
     "text": "Footnotes\n\n\nCalifornia Department of Food and Agriculture. (2024). California agricultural production statistics [web page]. Available: https://www.cdfa.ca.gov/statistics. [Accessed: Dec. 4, 2025]↩︎"
   },
   {
-    "objectID": "about.html",
-    "href": "about.html",
-    "title": "About",
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "🌱 Turning Data Into Nourishment 🌱",
     "section": "",
-    "text": "Here is where I describe what I do professionally"
-  },
-  {
-    "objectID": "about.html#what-i-do-for-work",
-    "href": "about.html#what-i-do-for-work",
-    "title": "About",
-    "section": "",
-    "text": "Here is where I describe what I do professionally"
-  },
-  {
-    "objectID": "about.html#what-i-do-for-fun",
-    "href": "about.html#what-i-do-for-fun",
-    "title": "About",
-    "section": "What I do for fun",
-    "text": "What I do for fun\nGive the people what they want! Something fun!"
-  },
-  {
-    "objectID": "posts/biodiversity-intactness-index-change/index.html",
-    "href": "posts/biodiversity-intactness-index-change/index.html",
-    "title": "Biodiversity Intactness Index Change in the Phoenix Subdivision (2017–2020)",
-    "section": "",
-    "text": "GitHub repository: https://github.com/jwonyk/biodiversity-intactness-index-change"
-  },
-  {
-    "objectID": "posts/biodiversity-intactness-index-change/index.html#about",
-    "href": "posts/biodiversity-intactness-index-change/index.html#about",
-    "title": "Biodiversity Intactness Index Change in the Phoenix Subdivision (2017–2020)",
-    "section": "About",
-    "text": "About\n\nPurpose\nThis repository contains the analysis for a project examining changes in the Biodiversity Intactness Index (BII) in the Phoenix subdivision of Maricopa County, AZ, from 2017 to 2020. Using 100 m BII data, the project explores how rapid urban growth may be affecting local biodiversity.\n\n\nHighlights\n\nExtracting and clipping BII rasters for 2017 and 2020 to the Phoenix subdivision boundary.\nCalculating the percentage of the subdivision area with BII ≥ 0.75 for both years.\nMapping areas that lost high BII values (≥ 0.75) between 2017 and 2020.\nSituating the Phoenix subdivision within its broader geographic and urban context using additional vector/raster data and basemaps.\n\n\n\nAbout the data\n\nBiodiversity Intactness Index (BII): BII data are taken from the io-biodiversity collection on the Microsoft Planetary Computer, which provides global 100 m BII projections for 2017–2020. For this project, the 2017 and 2020 rasters covering the Phoenix subdivision (bounding box: [-112.826843, 32.974108, -111.184387, 33.863574]) are loaded and then clipped to the Phoenix subdivision boundary to calculate metrics such as the percentage of area with BII ≥ 0.75.\nPhoenix subdivision boundary: The Phoenix subdivision boundary comes from the Census County Subdivision TIGER/Line shapefiles for Arizona. This polygon defines the analysis area, is used to clip the BII rasters, and provides geographic context for mapping within Maricopa County and the surrounding region.\n\n\n\nReferences\n\nMicrosoft Planetary Computer, Biodiversity Intactness Index (BII) Time Series, io-biodiversity Collection, 2017–2020 [data file]. Available from the Microsoft Planetary Computer STAC catalog. [Accessed: Dec. 1, 2025]\nU.S. Census Bureau, County Subdivision Shapefiles, Arizona (TIGER/Line) [data file]. Available from the U.S. Census Bureau TIGER/Line shapefile download portal. [Accessed: Dec. 1, 2025]"
-  },
-  {
-    "objectID": "posts/biodiversity-intactness-index-change/index.html#setup",
-    "href": "posts/biodiversity-intactness-index-change/index.html#setup",
-    "title": "Biodiversity Intactness Index Change in the Phoenix Subdivision (2017–2020)",
-    "section": "Setup",
-    "text": "Setup\nLoad required Python packages and configure the workspace.\n\n# Load in all necessary packages\nimport geopandas as gpd\nimport xarray as xr\nimport rioxarray as rioxr\n\nimport matplotlib.pyplot as plt\nimport matplotlib.patches as mpatches\nfrom matplotlib.colors import ListedColormap\n\nimport numpy as np\nimport contextily as ctx\nfrom shapely.geometry import box\n\nfrom pystac_client import Client  # To access STAC catalogs\nimport planetary_computer as pc  # To sign items from the MPC STAC catalog"
-  },
-  {
-    "objectID": "posts/biodiversity-intactness-index-change/index.html#read-in-data",
-    "href": "posts/biodiversity-intactness-index-change/index.html#read-in-data",
-    "title": "Biodiversity Intactness Index Change in the Phoenix Subdivision (2017–2020)",
-    "section": "Read in Data",
-    "text": "Read in Data\nImport the Census TIGER/Line shapefile and filter to the Phoenix subdivision.\n\n# Load all county subdivisions for AZ\nsubdivisions = gpd.read_file('data/tl_2020_04_cousub/tl_2020_04_cousub.shp')  \n\n# Filter to Phoenix subdivision\nphoenix_subdivisions = subdivisions[subdivisions['NAME'] == 'Phoenix'].to_crs(epsg = 3857)"
-  },
-  {
-    "objectID": "posts/biodiversity-intactness-index-change/index.html#access",
-    "href": "posts/biodiversity-intactness-index-change/index.html#access",
-    "title": "Biodiversity Intactness Index Change in the Phoenix Subdivision (2017–2020)",
-    "section": "Access",
-    "text": "Access\nQuery the Microsoft Planetary Computer STAC API for 2017 and 2020 BII rasters. We use the Client function from the pystac_client package to access the catalog:\n\n# Set bounding box\nbbox = [-112.826843, 32.974108, -111.184387, 33.863574]\n\n# Access STAC catalog\ncatalog = Client.open(\"https://planetarycomputer.microsoft.com/api/stac/v1\")\n\n# Search BII raster for 2017 & 2020\nsearch_2017 = catalog.search(\n    collections = ['io-biodiversity'],\n    bbox = bbox,\n    datetime = '2017-01-01/2017-12-31')\n\nsearch_2020 = catalog.search(\n    collections = ['io-biodiversity'],\n    bbox = bbox,\n    datetime = '2020-01-01/2020-12-31')\n\n# Extract matching item from each search\nitem_2017 = list(search_2017.items())[0]\nitem_2020 = list(search_2020.items())[0]\n\n# Find the asset key\nitem_2017.assets.keys(), item_2020.assets.keys()\n\n(dict_keys(['data', 'tilejson', 'rendered_preview']),\n dict_keys(['data', 'tilejson', 'rendered_preview']))"
-  },
-  {
-    "objectID": "posts/biodiversity-intactness-index-change/index.html#read-in-bii-rasters",
-    "href": "posts/biodiversity-intactness-index-change/index.html#read-in-bii-rasters",
-    "title": "Biodiversity Intactness Index Change in the Phoenix Subdivision (2017–2020)",
-    "section": "Read in BII Rasters",
-    "text": "Read in BII Rasters\nOpen the raster assets into xarray objects and inspect dimensions and CRS.\n\n# Access the GeoTIFF from STAC\nasset_2017 = pc.sign(item_2017.assets['data'])\nasset_2020 = pc.sign(item_2020.assets['data'])\n\n# Read in raster to xarray DataArrays to clip and mask\nbii_2017 = rioxr.open_rasterio(asset_2017.href).squeeze()\nbii_2020 = rioxr.open_rasterio(asset_2020.href).squeeze()\n\n# Inspect the data\nbii_2017, bii_2017.shape, bii_2017.rio.crs\n\n(&lt;xarray.DataArray (y: 7992, x: 7992)&gt; Size: 255MB\n [63872064 values with dtype=float32]\n Coordinates:\n     band         int32 4B 1\n   * x            (x) float64 64kB -115.4 -115.4 -115.4 ... -108.2 -108.2 -108.2\n   * y            (y) float64 64kB 34.74 34.74 34.74 34.74 ... 27.57 27.57 27.57\n     spatial_ref  int32 4B 0\n Attributes:\n     AREA_OR_POINT:  Area\n     scale_factor:   1.0\n     add_offset:     0.0,\n (7992, 7992),\n CRS.from_wkt('GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AXIS[\"Latitude\",NORTH],AXIS[\"Longitude\",EAST],AUTHORITY[\"EPSG\",\"4326\"]]'))"
-  },
-  {
-    "objectID": "posts/biodiversity-intactness-index-change/index.html#clip-rasters-to-phoenix-subdivision",
-    "href": "posts/biodiversity-intactness-index-change/index.html#clip-rasters-to-phoenix-subdivision",
-    "title": "Biodiversity Intactness Index Change in the Phoenix Subdivision (2017–2020)",
-    "section": "Clip Rasters to Phoenix Subdivision",
-    "text": "Clip Rasters to Phoenix Subdivision\nMatch CRS between raster and vector data, then clip the rasters to the subdivision boundary.\n\n# Match CRS before clipping\nphoenix_subdivisions_projection = phoenix_subdivisions.to_crs(bii_2017.rio.crs)\n\n# Clip the Phoenix subdivision to reduce size and keep only pixels inside\nbii_2017_clip = (bii_2017.rio.clip_box(*phoenix_subdivisions_projection.total_bounds)\n                         .rio.clip(phoenix_subdivisions_projection.geometry, phoenix_subdivisions_projection.crs))\nbii_2020_clip = (bii_2020.rio.clip_box(*phoenix_subdivisions_projection.total_bounds)\n                         .rio.clip(phoenix_subdivisions_projection.geometry, phoenix_subdivisions_projection.crs))"
-  },
-  {
-    "objectID": "posts/biodiversity-intactness-index-change/index.html#mapping-phoenix-subdivision",
-    "href": "posts/biodiversity-intactness-index-change/index.html#mapping-phoenix-subdivision",
-    "title": "Biodiversity Intactness Index Change in the Phoenix Subdivision (2017–2020)",
-    "section": "Mapping Phoenix Subdivision",
-    "text": "Mapping Phoenix Subdivision\nPlot the Phoenix subdivision boundary over a basemap\n\n# Create figure\nfig, ax = plt.subplots(1, 1, figsize = (14, 12))\n\n# Reproject to Web Mercator for contextily\nphoenix_subdivisions_web = phoenix_subdivisions_projection.to_crs(epsg = 3857)\n\n# Plot the subdivision boundary\nphoenix_subdivisions_web.boundary.plot(ax = ax, edgecolor = 'red', linewidth = 5)\n\n# Add basemap\nctx.add_basemap(ax, source = ctx.providers.OpenStreetMap.Mapnik)\n\n# Add title and clean ticks\nax.set_title('Phoenix Subdivision', fontsize = 20, fontweight = 'bold')\nax.set_xticks([])\nax.set_yticks([])\n\n# Improve layout so elements do not overlap\nplt.tight_layout()\nplt.show()"
-  },
-  {
-    "objectID": "posts/biodiversity-intactness-index-change/index.html#calculate-percentage-of-area-with-bii",
-    "href": "posts/biodiversity-intactness-index-change/index.html#calculate-percentage-of-area-with-bii",
-    "title": "Biodiversity Intactness Index Change in the Phoenix Subdivision (2017–2020)",
-    "section": "Calculate Percentage of Area With BII",
-    "text": "Calculate Percentage of Area With BII\nCompute the proportion of valid pixels in 2017 and 2020 exceeding the threshold (0.75)\n\n# Threshold representing high biodiversity intactness\nthreshold = 0.75\n\n# Boolean masks identify pixels meeting the threshold\nhigh_2017 = bii_2017_clip &gt;= threshold\nhigh_2020 = bii_2020_clip &gt;= threshold\n\n# Identify pixels inside the polygon with valid raster data\nvalid_2017 = ~bii_2017_clip.isnull()\nvalid_2020 = ~bii_2020_clip.isnull()\n\n# Count qualifying pixels and total valid pixels\nn_high_2017 = (high_2017 & valid_2017).sum().item()\nn_total_2017 = valid_2017.sum().item()\n\nn_high_2020 = (high_2020 & valid_2020).sum().item()\nn_total_2020 = valid_2020.sum().item()\n\n# Compute percentages\npct_2017 = (n_high_2017 / n_total_2017) * 100\npct_2020 = (n_high_2020 / n_total_2020) * 100\n\nprint(f\"Percentage of of area of the Phoenix subdivision with a BII of at least 0.75 in 2017: {pct_2017:.2f}\")\nprint(f\"Percentage of of area of the Phoenix subdivision with a BII of at least 0.75 in 2020: {pct_2020:.2f}\")\n\nPercentage of of area of the Phoenix subdivision with a BII of at least 0.75 in 2017: 7.13\nPercentage of of area of the Phoenix subdivision with a BII of at least 0.75 in 2020: 6.49"
-  },
-  {
-    "objectID": "posts/biodiversity-intactness-index-change/index.html#result-summary",
-    "href": "posts/biodiversity-intactness-index-change/index.html#result-summary",
-    "title": "Biodiversity Intactness Index Change in the Phoenix Subdivision (2017–2020)",
-    "section": "Result Summary",
-    "text": "Result Summary\nUsing a threshold (BII ≥ 0.75) to test the high biodiversity intactness, the result in shown in the followings: 7.13% of the Phoenix subdivision met this criteria, but it dropped in 2020 to only 6.49%. The degradation over the three-year period shows the portion of subdivision with ongoing pressure on habitats."
-  },
-  {
-    "objectID": "posts/biodiversity-intactness-index-change/index.html#identify-areas-that-lost-high-bii",
-    "href": "posts/biodiversity-intactness-index-change/index.html#identify-areas-that-lost-high-bii",
-    "title": "Biodiversity Intactness Index Change in the Phoenix Subdivision (2017–2020)",
-    "section": "Identify Areas That Lost High BII",
-    "text": "Identify Areas That Lost High BII\nCreate a Boolean mask showing pixels that were BII ≥0.75 in 2017 but not in 2020.\n\n# Identify pixels that no longer meet the threshold in 2020\nlost_high_bii = (high_2017 & valid_2017) & ~(high_2020 & valid_2020)"
-  },
-  {
-    "objectID": "posts/biodiversity-intactness-index-change/index.html#mapping-lost-high-bii-areas",
-    "href": "posts/biodiversity-intactness-index-change/index.html#mapping-lost-high-bii-areas",
-    "title": "Biodiversity Intactness Index Change in the Phoenix Subdivision (2017–2020)",
-    "section": "Mapping Lost High-BII Areas",
-    "text": "Mapping Lost High-BII Areas\nOverlay lost-BII pixels (in red) on the 2020 BII raster.\n\n# Create figure\nfig, ax = plt.subplots(figsize = (10, 10))\n\n# Ensure `lost_high_bii` is float mask\nlost_high_bii_mask = lost_high_bii.where(lost_high_bii, other = np.nan)\n\n# ---------------------------------------------------------------\n# Plot BII 2020 as the background \n# ---------------------------------------------------------------\n\nbii_plot = bii_2020_clip.plot(ax = ax, cmap = 'Greens',\n                              vmin = 0.1, vmax = 0.88,\n                              add_colorbar = False)\n\n# ---------------------------------------------------------------\n# Overlay lost high-BII areas in red (fixed red color \n# ---------------------------------------------------------------\n\nlost_high_bii_mask.plot(ax = ax, cmap = ListedColormap(['red']), \n                   alpha = 1.0, add_colorbar = False)\n\n# ---------------------------------------------------------------\n# Add Phoenix subdivision outline\n# ---------------------------------------------------------------\n\nphoenix_subdivisions_projection.boundary.plot(ax = ax, color = 'black', linewidth = 1)\n\n# ---------------------------------------------------------------\n#  Add title\n# ---------------------------------------------------------------\n\nax.set_title('Biodiversity Intactness Index (BII)\\nPhoenix Subdivision',\n             fontsize = 16, fontweight = 'bold', pad = 20)\n\nax.axis('off')\n\n# ---------------------------------------------------------------\n# Add colorbar for BII 2020\n# ---------------------------------------------------------------\n\ncbar = plt.colorbar(bii_plot, ax = ax, orientation = 'horizontal', \n                    fraction = 0.046, pad = 0.07)\ncbar.set_label('BII for 2020', fontsize = 12)\n\n# ---------------------------------------------------------------\n# Add red legend entry for lost high-BII pixels\n# ---------------------------------------------------------------\n\nlost_patch = mpatches.Patch(color = 'red', \n                            label = 'Area with BII ≥ 0.75 lost from 2017 to 2020')\n\nax.legend(handles = [lost_patch], \n          loc = 'lower center', \n          bbox_to_anchor = (0.5, -0.12))\n\nplt.show()"
-  },
-  {
-    "objectID": "posts/biodiversity-intactness-index-change/index.html#interpretation-of-bii-change-2017---2020",
-    "href": "posts/biodiversity-intactness-index-change/index.html#interpretation-of-bii-change-2017---2020",
-    "title": "Biodiversity Intactness Index Change in the Phoenix Subdivision (2017–2020)",
-    "section": "Interpretation of BII Change (2017 - 2020)",
-    "text": "Interpretation of BII Change (2017 - 2020)\nThe map illutrates how biodiversity conditions changed in the Phoenix subdivision between 2017 and 2020. The map shows 2020 BII values in green and highlighted with red in the areas where there has been high biodiversity intactness (BII ≥ 0.75) which no longer meet that threshold. There are larger amount of concentrations of biodiversity loss in the northeastern part of the subdivision while smaller pockets of decline is occuring in the southern and southeastern regions. The urbanization in the area may be correlated reducing local wild habitat and loss of biodiversity."
+    "text": "My name is Jay Kim (she/her), a researcher passionate about food systems with a background in Psychology and East Asian studies from UC Irvine. From managing my family’s business during pandemic supply chain disruptions to supporting seniors in my community, I found a deep commitment to using data for community impact. I’ve applied analytics to reduce waste, improve efficiency, and explore climate justice research, and I’m committed to building equitable, sustainable food systems where everyone has access to what they need."
   },
   {
     "objectID": "posts.html",
