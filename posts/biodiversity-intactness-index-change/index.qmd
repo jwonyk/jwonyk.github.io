@@ -132,7 +132,7 @@ Plot the Phoenix subdivision boundary over a basemap
 
 ```{python}
 # Create figure
-fig, ax = plt.subplots(1, 1, figsize = (14, 12))
+fig, ax = plt.subplots(1, 1, figsize = (7, 5))
 
 # Reproject to Web Mercator for contextily
 phoenix_subdivisions_web = phoenix_subdivisions_projection.to_crs(epsg = 3857)
@@ -199,7 +199,7 @@ Overlay lost-BII pixels (in red) on the 2020 BII raster.
 
 ```{python}
 # Create figure
-fig, ax = plt.subplots(figsize = (10, 10))
+fig, ax = plt.subplots(figsize = (9, 9))
 
 # Ensure `lost_high_bii` is float mask
 lost_high_bii_mask = lost_high_bii.where(lost_high_bii, other = np.nan)
