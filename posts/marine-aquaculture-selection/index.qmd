@@ -12,6 +12,7 @@ bibliography: references.bib
 citation:
   url: "https://jwonyk.github.io/posts/marine-aquaculture-selection"
 ---
+**Github Repository**: https://github.com/jwonyk/marine-aquaculture-selection
 
 ## Introduction
 

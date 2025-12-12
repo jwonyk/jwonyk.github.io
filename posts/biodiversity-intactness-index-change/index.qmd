@@ -1,5 +1,5 @@
 ---
-title: "Biodiversity Intactness Index Change in the Phoenix Subdivision (2017–2020)"
+title: "Biodiversity Intactness Index Change in the Phoenix Subdivision"
 date: 2025-12-06
 categories: [MEDS, Python]
 image: landsat_eight_image_of_phoenix.png
@@ -17,26 +17,32 @@ bibliography: references.bib
 **GitHub repository:** https://github.com/jwonyk/biodiversity-intactness-index-change
 
 ## About
+
 #### Purpose
+
 This repository contains the analysis for a project examining changes in the Biodiversity Intactness Index (BII) in the Phoenix subdivision of Maricopa County, AZ, from 2017 to 2020. Using 100 m BII data, the project explores how rapid urban growth may be affecting local biodiversity.
 
 #### Highlights
-- Extracting and clipping BII rasters for 2017 and 2020 to the Phoenix subdivision boundary.
-- Calculating the percentage of the subdivision area with BII ≥ 0.75 for both years.
-- Mapping areas that lost high BII values (≥ 0.75) between 2017 and 2020.
-- Situating the Phoenix subdivision within its broader geographic and urban context using additional vector/raster data and basemaps.
+
+-   Extracting and clipping BII rasters for 2017 and 2020 to the Phoenix subdivision boundary.
+-   Calculating the percentage of the subdivision area with BII ≥ 0.75 for both years.
+-   Mapping areas that lost high BII values (≥ 0.75) between 2017 and 2020.
+-   Situating the Phoenix subdivision within its broader geographic and urban context using additional vector/raster data and basemaps.
 
 #### About the data
-- **Biodiversity Intactness Index (BII)**: BII data are taken from the `io-biodiversity` collection on the Microsoft Planetary Computer, which provides global 100 m BII projections for 2017–2020. For this project, the 2017 and 2020 rasters covering the Phoenix subdivision (bounding box: `[-112.826843, 32.974108, -111.184387, 33.863574]`) are loaded and then clipped to the Phoenix subdivision boundary to calculate metrics such as the percentage of area with BII ≥ 0.75.
 
-- **Phoenix subdivision boundary**: The Phoenix subdivision boundary comes from the Census County Subdivision TIGER/Line shapefiles for Arizona. This polygon defines the analysis area, is used to clip the BII rasters, and provides geographic context for mapping within Maricopa County and the surrounding region.
+-   **Biodiversity Intactness Index (BII)**: BII data are taken from the `io-biodiversity` collection on the Microsoft Planetary Computer, which provides global 100 m BII projections for 2017–2020. For this project, the 2017 and 2020 rasters covering the Phoenix subdivision (bounding box: `[-112.826843, 32.974108, -111.184387, 33.863574]`) are loaded and then clipped to the Phoenix subdivision boundary to calculate metrics such as the percentage of area with BII ≥ 0.75.
+
+-   **Phoenix subdivision boundary**: The Phoenix subdivision boundary comes from the Census County Subdivision TIGER/Line shapefiles for Arizona. This polygon defines the analysis area, is used to clip the BII rasters, and provides geographic context for mapping within Maricopa County and the surrounding region.
 
 #### References
-- Microsoft Planetary Computer, _Biodiversity Intactness Index (BII) Time Series, io-biodiversity Collection_, 2017–2020 [data file]. Available from the Microsoft Planetary Computer STAC catalog. [Accessed: Dec. 1, 2025]
 
-- U.S. Census Bureau, _County Subdivision Shapefiles, Arizona (TIGER/Line)_ [data file]. Available from the U.S. Census Bureau TIGER/Line shapefile download portal. [Accessed: Dec. 1, 2025]
+-   Microsoft Planetary Computer, *Biodiversity Intactness Index (BII) Time Series, io-biodiversity Collection*, 2017–2020 \[data file\]. Available from the Microsoft Planetary Computer STAC catalog. \[Accessed: Dec. 1, 2025\]
+
+-   U.S. Census Bureau, *County Subdivision Shapefiles, Arizona (TIGER/Line)* \[data file\]. Available from the U.S. Census Bureau TIGER/Line shapefile download portal. \[Accessed: Dec. 1, 2025\]
 
 ## Setup
+
 Load required Python packages and configure the workspace.
 
 ```{python}
@@ -58,7 +64,8 @@ import planetary_computer as pc  # To sign items from the MPC STAC catalog
 ```
 
 ## Read in Data
-Import the Census TIGER/Line shapefile and filter to the Phoenix subdivision. 
+
+Import the Census TIGER/Line shapefile and filter to the Phoenix subdivision.
 
 ```{python}
 # Load all county subdivisions for AZ
@@ -69,6 +76,7 @@ phoenix_subdivisions = subdivisions[subdivisions['NAME'] == 'Phoenix'].to_crs(ep
 ```
 
 ## Access
+
 Query the Microsoft Planetary Computer STAC API for 2017 and 2020 BII rasters. We use the Client function from the `pystac_client` package to access the catalog:
 
 ```{python}
@@ -98,7 +106,8 @@ item_2017.assets.keys(), item_2020.assets.keys()
 ```
 
 ## Read in BII Rasters
-Open the raster assets into `xarray` objects and inspect dimensions and CRS.
+
+Open the raster assets into `xarray` objects.
 
 ```{python}
 # Access the GeoTIFF from STAC
@@ -108,12 +117,10 @@ asset_2020 = pc.sign(item_2020.assets['data'])
 # Read in raster to xarray DataArrays to clip and mask
 bii_2017 = rioxr.open_rasterio(asset_2017.href).squeeze()
 bii_2020 = rioxr.open_rasterio(asset_2020.href).squeeze()
-
-# Inspect the data
-bii_2017, bii_2017.shape, bii_2017.rio.crs
 ```
 
 ## Clip Rasters to Phoenix Subdivision
+
 Match CRS between raster and vector data, then clip the rasters to the subdivision boundary.
 
 ```{python}
@@ -128,25 +135,52 @@ bii_2020_clip = (bii_2020.rio.clip_box(*phoenix_subdivisions_projection.total_bo
 ```
 
 ## Mapping Phoenix Subdivision
+
 Plot the Phoenix subdivision boundary over a basemap
 
 ```{python}
-# Create figure
-fig, ax = plt.subplots(1, 1, figsize = (7, 5))
-
 # Reproject to Web Mercator for contextily
 phoenix_subdivisions_web = phoenix_subdivisions_projection.to_crs(epsg = 3857)
 
+# Compute true spatial aspect ratio from data bounds
+minx, miny, maxx, maxy = phoenix_subdivisions_web.total_bounds
+width = maxx - minx
+height = maxy - miny
+aspect_ratio = width / height  # width / height
+
+# Fix figure height and scale width accordingly
+fig_height = 7
+fig_width = fig_height * aspect_ratio
+
+# Create figure with true array ratio
+fig, ax = plt.subplots(1, 1, figsize = (fig_width, fig_height))
+
 # Plot the subdivision boundary
-phoenix_subdivisions_web.boundary.plot(ax = ax, edgecolor = 'red', linewidth = 5)
+phoenix_subdivisions_web.plot(ax = ax,
+                              edgecolor = 'blue',
+                              color = '#93E9BE',
+                              linewidth = 5, 
+                              alpha = 0.5)
 
 # Add basemap
 ctx.add_basemap(ax, source = ctx.providers.OpenStreetMap.Mapnik)
 
 # Add title and clean ticks
-ax.set_title('Phoenix Subdivision', fontsize = 20, fontweight = 'bold')
+ax.set_title('Phoenix Subdivision overlay Arizona OpenStreetMap', 
+             fontsize = 20, fontweight = 'bold')
 ax.set_xticks([])
 ax.set_yticks([])
+
+# Add legend
+border_patch = mpatches.Patch(color = '#93E9BE', alpha = 0.5, 
+                              label = 'Phoenix Subdivision')
+
+legend_properties = {'weight': 'bold', 'size': 'large'}
+
+plt.legend(handles = [border_patch], loc = (0.1, 0.8),
+           prop = legend_properties, 
+           handlelength = 2.5, handleheight = 2.5, handletextpad = 1.0,
+           borderpad = 1.0, labelspacing = 1.0)
 
 # Improve layout so elements do not overlap
 plt.tight_layout()
@@ -154,6 +188,7 @@ plt.show()
 ```
 
 ## Calculate Percentage of Area With BII
+
 Compute the proportion of valid pixels in 2017 and 2020 exceeding the threshold (0.75)
 
 ```{python}
@@ -184,9 +219,11 @@ print(f"Percentage of of area of the Phoenix subdivision with a BII of at least 
 ```
 
 ## Result Summary
+
 Using a threshold (BII ≥ 0.75) to test the high biodiversity intactness, the result in shown in the followings: 7.13% of the Phoenix subdivision met this criteria, but it dropped in 2020 to only 6.49%. The degradation over the three-year period shows the portion of subdivision with ongoing pressure on habitats.
 
 ## Identify Areas That Lost High BII
+
 Create a Boolean mask showing pixels that were BII ≥0.75 in 2017 but not in 2020.
 
 ```{python}
@@ -195,13 +232,27 @@ lost_high_bii = (high_2017 & valid_2017) & ~(high_2020 & valid_2020)
 ```
 
 ## Mapping Lost High-BII Areas
+
 Overlay lost-BII pixels (in red) on the 2020 BII raster.
 
 ```{python}
-# Create figure
-fig, ax = plt.subplots(figsize = (9, 9))
+# ---------------------------------------------------------------
+# Compute true raster aspect ratio (width / height)
+# ---------------------------------------------------------------
 
+bii_aspect_ratio = bii_2020_clip.rio.width / bii_2020_clip.rio.height
+
+# Fix figure height and scale width accordingly
+fig_height = 9
+fig_width = fig_height * bii_aspect_ratio
+
+# Create figure with true array ratio
+fig, ax = plt.subplots(figsize = (fig_width, fig_height))
+
+# ---------------------------------------------------------------
 # Ensure `lost_high_bii` is float mask
+# ---------------------------------------------------------------
+
 lost_high_bii_mask = lost_high_bii.where(lost_high_bii, other = np.nan)
 
 # ---------------------------------------------------------------
@@ -251,11 +302,11 @@ lost_patch = mpatches.Patch(color = 'red',
 
 ax.legend(handles = [lost_patch], 
           loc = 'lower center', 
-          bbox_to_anchor = (0.5, -0.12))
+          bbox_to_anchor = (0.5, -0.075))
 
 plt.show()
 ```
 
 ## Interpretation of BII Change (2017 - 2020)
-The map illutrates how biodiversity conditions changed in the Phoenix subdivision between 2017 and 2020. The map shows 2020 BII values in green and highlighted with red in the areas where there has been high biodiversity intactness (BII ≥ 0.75) which no longer meet that threshold. There are larger amount of concentrations of biodiversity loss in the northeastern part of the subdivision while smaller pockets of decline is occuring in the southern and southeastern regions. The urbanization in the area may be correlated reducing local wild habitat and loss of biodiversity.
 
+The map illutrates how biodiversity conditions changed in the Phoenix subdivision between 2017 and 2020. The map shows 2020 BII values in green and highlighted with red in the areas where there has been high biodiversity intactness (BII ≥ 0.75) which no longer meet that threshold. There are larger amount of concentrations of biodiversity loss in the northeastern part of the subdivision while smaller pockets of decline is occuring in the southern and southeastern regions. The urbanization in the area may be correlated reducing local wild habitat and loss of biodiversity.
