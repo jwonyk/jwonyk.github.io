@@ -12,6 +12,7 @@ bibliography: references.bib
 citation:
   url: "https://jwonyk.github.io/posts/crop-water-gamma/"
 ---
+**Github Repository**: https://github.com/jwonyk/crop-water-gamma
 
 ## Introduction
 
