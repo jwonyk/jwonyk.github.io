@@ -15,7 +15,7 @@ citation:
 
 **Github Repository**: https://github.com/jwonyk/marine-aquaculture-selection
 
-## Introduction
+## Introduction and Problem Statement
 
 Exclusive Economic Zones (EEZs) are marine areas extending up to 200 nautical miles from the coast, where the U.S. has special rights to use and manage resources. The growth of marine aquaculture has increased the need for spatial analyses that help identify where different species are most likely to thrive. For shellfish farmers, selecting suitable offshore locations is crucial, which entails determining the proper environmental conditions, such as temperature and depth, that strongly influence survival, growth, overall yield potential, and understanding how to support more sustainable development. This analysis addresses the question:
 
@@ -31,9 +31,10 @@ Exclusive Economic Zones (EEZs) boundaries are obtained from [MarineRegions.org]
 
 Species-specific temperature and depth thresholds are applied for oysters and mussels to reflect differences in environmental tolerance and habitat requirements are retrieved from [SeaLifeBase](https://www.sealifebase.ca/search.php).
 
-## Analysis Setup
+## Data Preparation and Suitability Modeling
+#### Analysis Setup
 
-We are going to clear the environment and load necessary packages.
+First, we are going to clear the environment and load necessary packages.
 
 ```{r}
 #| label: setup
@@ -48,7 +49,7 @@ pacman::p_load(tidyverse, sf, here,
                janitor, knitr, kableExtra, paletteer)
 ```
 
-## Explore the Data
+#### Explore the Data
 
 In this step, I prepare the environmental datasets used to evaluate aquaculture suitability along the U.S. West Coast. I begin by loading multiple years of sea surface temperature rasters, check coordinate reference systems (CRS) to see spatial layers align correctly for later operations, computing their mean to represent long-term thermal conditions, and then converting values from Kelvin to Celsius for ecological interpretation. Depth data are read in and resampled to match the sea surface temperature raster's resolution, extent, and coordinate reference system, ensuring cell-by-cell comparisons. Both sea surface temperature and depth layers are then reclassified into binary suitable and unsuitable categories based on species-specific environmental thresholds. The resulting suitability rasters are cropped and masked to EEZ boundaries.
 
@@ -103,7 +104,7 @@ if(!crs(depth_rast) == crs(sst_rast)) {
 }
 ```
 
-## Compute Mean SST and Convert to Celsius
+#### Compute Mean SST and Convert to Celsius
 
 Because SST data span multiple years, we average the rasters to obtain a mean temperature surface, which is then converted from Kelvin to Celsius.
 
@@ -122,7 +123,7 @@ sst_mean_celsius <- sst_mean_kelvin - 273.15
 names(sst_mean_celsius) <- "sst_mean_celsius"
 ```
 
-## Align Depth Raster to SST Raster
+#### Align Depth Raster to SST Raster
 
 The depth raster must match the SST raster’s resolution and extent to ensure accurate cell-by-cell comparison during suitability calculations.
 
@@ -143,7 +144,7 @@ depth_resample <- resample(depth_crop,
 names(depth_resample) <- "depth_resample"
 ```
 
-## Reclassifying & Combine for Suitability
+#### Reclassifying & Combine for Suitability
 
 We convert continuous SST values into a binary suitability layer based on oyster temperature thresholds from the literature. Similarly, depth values are reclassified to identify areas within the allowable depth range for oyster growth. Multiplying the two binary layers identifies grid cells that meet both environmental requirements.
 
@@ -174,7 +175,7 @@ oyster_depth_suitable <- lapp(depth_resample,
 oyster_cells_suitable <- oyster_sst_suitable * oyster_depth_suitable
 ```
 
-## Crop and Mask Suitability to EEZ Boundaries
+#### Crop and Mask Suitability to EEZ Boundaries
 
 We restrict the area of interest to U.S. West Coast Exclusive Economic Zones (EEZs), ensuring suitability is evaluated only within jurisdictional waters.
 
@@ -193,7 +194,7 @@ oyster_crop <- crop(oyster_cells_suitable, eez_vector)
 oyster_eez <- mask(oyster_crop, eez_vector)
 ```
 
-## Compute Suitable Cells to Area
+#### Compute Suitable Cells to Area
 
 Each raster cell’s area is computed and summed within each EEZ to quantify total suitable habitat in square kilometers.
 
@@ -212,7 +213,7 @@ oyster_area <- oyster_eez * cell_area_km2
 names(oyster_area) <- "suitable_area_km2"
 ```
 
-## Join Suitability Results to EEZ Polygons
+#### Join Suitability Results to EEZ Polygons
 
 We join calculated suitable area values back to EEZ polygons so they can be visualized on a choropleth map.
 
@@ -232,7 +233,7 @@ eez_vector <- vect(eez)
 eez_id_raster <- rasterize(eez_vector, oyster_area, field = "eez_id")
 ```
 
-## Calculate and Summarize Suitable Area by EEZ
+#### Calculate and Summarize Suitable Area by EEZ
 
 We sum all suitable raster cells within each EEZ and join these results to the EEZ polygons.
 
@@ -266,9 +267,9 @@ eez_oyster_join %>%
   
 ```
 
-## Map Oyster Aquaculture Suitability
+## Oyster Aquaculture Suitability
 
-Oysters require relatively warm sea surface temperatures and moderate depths, making their potential habitat strongly influenced by latitudinal temperature gradients along the West Coast. The map below visualizes how these environmental constraints translate into regional differences in oyster aquaculture suitability across EEZs, highlighting areas where conditions are most favorable for oyster growth and infrastructure deployment.
+Oysters require relatively warm sea surface temperatures and moderate depths, making their potential habitat strongly influenced by latitudinal temperature gradients along the West Coast. Below, I visualize how these environmental constraints translate into regional differences in oyster aquaculture suitability across EEZs, highlighting areas where conditions are most favorable for oyster growth and infrastructure deployment.
 
 ```{r}
 #| label: oyster-result
@@ -300,13 +301,12 @@ tm_shape(eez_map) +
               position = c("left", "bottom"))
 ```
 
-## Reflection - Oyster Aquaculture Suitability
+#### Reflection - Oyster Aquaculture Suitability
 
 The oyster aquaculture suitability analysis demonstrates how combining raster-based environmental data with vector-based EEZ boundaries reveals spatial patterns relevant to marine resource planning. By averaging five years of SST data and resampling bathymetry, this analysis identifies regions where environmental conditions align with oyster growth requirements. Warmer southern EEZs exhibit substantially larger suitable areas than northern regions, highlighting how temperature and depth jointly constrain oyster aquaculture potential along the West Coast.
 
-## Apply Workflow Function
-
-To show generalizability, the suitability workflow is applied to another species with different environmental thresholds.
+## Applying the Suitability Model to Multiple Species
+To demonstrate that this suitability framework is not species-specific, the workflow was generalized into a reusable function. This approach allows different environmental thresholds to be applied while keeping the underlying spatial processing steps consistent. By changing only temperature and depth constraints, the same modeling framework can be used to evaluate suitability for multiple aquaculture species.
 
 ```{r}
 #| label: species-function
@@ -371,9 +371,9 @@ map <- tm_tiles("Esri.OceanBasemap") +
 return(map)}
 ```
 
-## Map Mussel Aquaculture Suitability
+## Mussel Aquaculture Suitability
 
-Mussels are adapted to cooler waters and shallower depths, leading to a spatial suitability pattern that differs markedly from that of oysters. The map below illustrates how these contrasting environmental preferences shift suitable habitat northward, revealing regions where mussel aquaculture may be more viable under existing temperature and depth conditions.
+Mussels are adapted to cooler waters and shallower depths, leading to a spatial suitability pattern that differs markedly from that of oysters. I illustrate with the following map to see how these contrasting environmental preferences shift suitable habitat northward, revealing regions where mussel aquaculture may be more viable under existing temperature and depth conditions.
 
 ```{r}
 #| label: mussel-results
@@ -392,7 +392,7 @@ mussle_map <- compute_suitability(
 mussle_map
 ```
 
-## Reflection - Mussel Aquaculture Suitability
+#### Reflection - Mussel Aquaculture Suitability
 
 The mussel suitability assessment shows different spatial patterns compare to oysters, emphasizing how species-specific environmental requirements could lead to different aquaculture potential across EEZs. Mussels favor cooler temperature and shallow depths and shows that more suitable northward than southern regions - sustainability is highest in Northern California and Washington.
 
