@@ -16,7 +16,9 @@ citation:
 
 ## Introduction
 
-The growth of marine aquaculture has increased the need for spatial analyses that help identify where different species are most likely to thrive. For shellfish farmers, selecting suitable offshore locations is crucial, which entails determining the proper environmental conditions, such as temperature and depth, that strongly influence survival, growth, overall yield potential, and understanding how to support more sustainable development.
+The growth of marine aquaculture has increased the need for spatial analyses that help identify where different species are most likely to thrive. For shellfish farmers, selecting suitable offshore locations is crucial, which entails determining the proper environmental conditions, such as temperature and depth, that strongly influence survival, growth, overall yield potential, and understanding how to support more sustainable development. This analysis addresses the question:
+
+**Which U.S. West Coast EEZ regions provide the most suitable environmental conditions for oyster and mussel aquaculture based on sea surface temperature (SST) and depth?**
 
 ## Set up
 We are going to clear the environment and load necessary packages.
@@ -382,6 +384,6 @@ This analysis demonstrates how we use spatial data science to evaluate the susta
 
 These are the limitations that we need to include in our future analysis:
 
-**Environmental variables**: Suitability should depend on more than sea surface temperature and depth. We may need information such as 
+**Environmental variables**: Suitability should depend on more than sea surface temperature and depth. We may also need information such as chlorophyll concentration, salinity, ocean currents, and wave exposure.
 
 **Socioeconomic Aspects**: Not all environmentally suitable areas are socially, economically, and legally feasible for farmers.
