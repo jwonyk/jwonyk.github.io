@@ -18,11 +18,11 @@ bibliography: references.bib
 
 ## About
 
-### Purpose
+#### Purpose
 
 In early 2025, two major Southern California wildfires, the Eaton and the Palisades Fire, burned across different parts of Los Angeles County. To better understand the impacts of these events, this project combines Landsat 8 satellite imagery with census-tract-level community indicators from the 2024 Environmental Justice Index (EJI). By integrating remote sensing and social vulnerability data, this analysis highlights both the visible physical burn patterns from space and the community characteristics of affected populations.
 
-### Highlights
+#### Highlights
 
 -   Restore missing CRS from a Landsat NetCDF file
 -   Create true and false-color images to visualize vegetation, burned areas, and the landscape condition
