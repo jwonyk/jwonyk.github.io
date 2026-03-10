@@ -1,0 +1,125 @@
+Site_ID,Landcover,SoilSig_Presence,JumpingWorm_Presence,Pour1_Density,Pour2_Density,Pour3_Density,Pour1_EuropeanEarthworm_Presence,Pour2_EuropeanEarthworm_Presence,Pour3_EuropeanEarthworm_Presence,Abundance_Tok,Abundance_Agr,Abundance_unk,Abundance_Mh
+F1,Forest,NO,NO,0,0,0,NO,NO,NO,,,,
+F10,Forest,NO,NO,0,0,0,NO,YES,NO,,,,
+F12,Forest,NO,NO,0,0,0,NO,YES,YES,,,,
+F13,Forest,NO,NO,0,0,0,NO,YES,NO,,,,
+F14,Forest,NO,NO,0,0,0,YES,YES,YES,,,,
+F15,Forest,NO,NO,0,0,0,YES,YES,YES,,,,
+F17,Forest,NO,NO,0,0,0,NO,NO,YES,,,,
+F18,Forest,NO,NO,0,0,0,NO,NO,NO,,,,
+F19,Forest,NO,NO,0,0,0,NO,NO,NO,,,,
+F2,Forest,NO,NO,0,0,0,NO,NO,NO,,,,
+F20,Forest,NO,NO,0,0,0, NO,NO,NO,,,,
+F3,Forest,NO,NO,0,0,0,NO,NO,NO,,,,
+F5,Forest,YES,YES,20,16,24,NO,NO,NO,8,12,37,0
+F7,Forest,YES,YES,2,1,18,NO,NO,NO,9,2,10,0
+F8,Forest,YES,YES,6,6,6,NO,NO,NO,2,3,18,0
+F9,Forest,YES,YES,3,2,6,NO,NO,NO,1,2,6,0
+G1,Grassland,NO,NO,0,0,0,YES,YES,NO,,,,
+G11,Grassland,NO,NO,0,0,0,NO,NO,NO,,,,
+G12,Grassland,NO,NO,0,0,0,NO,NO,NO,,,,
+G14,Grassland,NO,NO,0,0,0,NO,NO,YES,,,,
+G15,Grassland,NO,NO,0,0,0,YES,YES,YES,,,,
+G16,Grassland,NO,NO,0,0,0,NO,NO,NO,,,,
+G18,Grassland,NO,NO,0,0,0,NO,NO,NO,,,,
+G19,Grassland,NO,NO,0,0,0,NO,NO,NO,,,,
+G2,Grassland,NO,NO,0,0,0,NO,YES,NO,,,,
+G20,Grassland,NO,NO,0,0,0,NO,NO,NO,,,,
+G4,Grassland,NO,NO,0,0,0,NO,NO,NO,,,,
+G5,Grassland,NO,NO,0,0,0,NO,NO,NO,,,,
+G6,Grassland,NO,NO,0,0,0,YES,NO,NO,,,,
+G7,Grassland,NO,NO,0,0,0,NO,NO,NO,,,,
+G8,Grassland,NO,NO,0,0,0,YES,NO,NO,,,,
+G9,Grassland,NO,NO,0,0,0,YES,NO,YES,,,,
+O1,Open Space,NO,NO,0,0,0,YES,YES,YES,,,,
+O10,Open Space,NO,NO,0,0,0,NO,YES,NO,,,,
+O11,Open Space,YES,YES,0,0,1,NO,YES,YES,0,0,1,0
+O12,Open Space,NO,NO,0,0,0,NO,YES,NO,,,,
+O15,Open Space,NO,NO,0,0,0,NO,YES,NO,,,,
+O16,Open Space,NO,NO,0,0,0,NO,NO,NO,,,,
+O18,Open Space,NO,NO,0,0,0,NO,NO,NO,,,,
+O19,Open Space,NO,NO,0,0,0,YES,NO,NO,,,,
+O3,Open Space,YES,NO,0,0,0,YES,YES,YES,,,,
+O5,Open Space,YES,YES,5,1,0,NO,YES,YES,0,0,3,0
+O6,Open Space,NO,NO,0,0,0,YES,NO,NO,,,,
+O7,Open Space,NO,NO,0,0,0,YES,NO,NO,,,,
+O8,Open Space,NO,NO,0,0,0,NO,NO,NO,,,,
+O9,Open Space,NO,NO,0,0,0,NO,NO,NO,,,,
+R10_G,Residential_Garden,YES,YES,1,0,0,NO,NO,NO,1,0,0,0
+R10_L,Residential_Lawn,NO,NO,0,0,0,NO,NO,NO,,,,
+R11_G,Residential_Garden,YES,YES,7,4,1,NO,NO,NO,3,3,5,1
+R11_L,Residential_Lawn,NO,NO,0,0,0,NO,NO,NO,,,,
+R12_G,Residential_Garden,YES,YES,3,5,4,NO,NO,NO,1,5,5,0
+R12_L,Residential_Lawn,YES,YES,0,1,3,NO,NO,NO,0,0,2,0
+R13_G,Residential_Garden,NO,NO,0,0,0,NO,NO,NO,,,,
+R13_L,Residential_Lawn,NO,NO,0,0,0,NO,NO,NO,,,,
+R14_G,Residential_Garden,YES,YES,1,1,1,NO,YES,NO,0,2,1,0
+R14_L,Residential_Lawn,NO,NO,0,0,0,NO,NO,NO,,,,
+R15_G,Residential_Garden,NO,NO,0,0,0,NO,NO,NO,,,,
+R15_L,Residential_Lawn,NO,NO,0,0,0,NO,NO,NO,,,,
+R16_G,Residential_Garden,NO,NO,0,0,0,NO,NO,YES,,,,
+R16_L,Residential_Lawn,NO,NO,0,0,0,NO,NO,YES,,,,
+R17_G,Residential_Garden,NO,NO,0,0,0,YES,NO,YES,,,,
+R17_L,Residential_Lawn,NO,NO,0,0,0,NO,NO,NO,,,,
+R18_G,Residential_Garden,YES,YES,0,0,0,NO,NO,NO,0,0,0,0
+R18_L,Residential_Lawn,YES,YES,11,1,0,NO,NO,NO,0,0,3,9
+R19_G,Residential_Garden,YES,YES,1,1,0,NO,NO,NO,0,0,2,0
+R19_L,Residential_Lawn,NO,NO,0,0,0,NO,NO,NO,,,,
+R2_G,Residential_Garden,NO,NO,0,0,0,NO,YES,YES,,,,
+R2_L,Residential_Lawn,NO,NO,0,0,0,YES,NO,NO,,,,
+R20_G,Residential_Garden,YES,YES,1,0,3,NO,NO,NO,0,2,2,0
+R20_L,Residential_Lawn,YES,NO,0,0,0,NO,NO,NO,,,,
+R21_G,Residential_Garden,YES,YES,0,1,1,NO,NO,NO,0,0,1,0
+R21_L,Residential_Lawn,YES,NO,0,0,0,NO,NO,NO,,,,
+R22_G,Residential_Garden,YES,YES,0,8,14,NO,NO,NO,4,4,11,0
+R22_L,Residential_Lawn,YES,NO,0,0,0,NO,NO,NO,,,,
+R23_G,Residential_Garden,NO,NO,0,0,0,NO,NO,NO,,,,
+R23_L,Residential_Lawn,NO,NO,0,0,0,NO,NO,NO,,,,
+R24_G,Residential_Garden,NA,NO,0,0,0,NO,NO,NO,,,,
+R24_L,Residential_Lawn,YES,YES,7,0,0,NO,NO,YES,0,7,0,0
+R25_G,Residential_Garden,YES,YES,4,0,3,NO,NO,NO,0,0,7,0
+R25_L,Residential_Lawn,YES,YES,1,0,1,NO,NO,NO,0,0,1,0
+R26_G,Residential_Garden,NO,NO,0,0,0,YES,NO,NO,,,,
+R26_L,Residential_Lawn,NO,NO,0,0,0,NO,NO,NO,,,,
+R27_G,Residential_Garden,YES,YES,2,2,4,NO,NO,NO,0,1,7,0
+R27_L,Residential_Lawn,YES,YES,1,1,2,YES,YES,NO,0,2,2,0
+R28_G,Residential_Garden,NO,NO,0,0,0,NO,NO,NO,,,,
+R28_L,Residential_Lawn,NO,NO,0,0,0,NO,NO,NO,,,,
+R29_G,Residential_Garden,YES,YES,0,7,1,NO,NO,NO,2,1,3,0
+R29_L,Residential_Lawn,NO,YES,0,0,2,NO,NO,NO,0,0,2,0
+R3_G,Residential_Garden,NO,NO,0,0,0,NO,NO,NO,,,,
+R3_L,Residential_Lawn,NO,NO,0,0,0,NO,NO,NO,,,,
+R30_G,Residential_Garden,NO,NO,0,0,0,YES,NO,YES,,,,
+R30_L,Residential_Lawn,NO,NO,0,0,0,NO,NO,NO,,,,
+R31_G,Residential_Garden,YES,NO,0,0,0,YES,NO,NO,,,,
+R31_L,Residential_Lawn,YES,NO,0,0,0,YES,YES,YES,,,,
+R32_G,Residential_Garden,NO,NO,0,0,0,YES,NO,NO,,,,
+R32_L,Residential_Lawn,NO,NO,0,0,0,NO,NO,NO,,,,
+R33_G,Residential_Garden,NO,NO,0,0,0,YES,YES,NO,,,,
+R33_L,Residential_Lawn,NO,NO,0,0,0,NO,NO,NO,,,,
+R34_G,Residential_Garden,NO,NO,0,0,0,YES,NO,YES,,,,
+R34_L,Residential_Lawn,NO,NO,0,0,0,NO,NO,NO,,,,
+R35_G,Residential_Garden,YES,YES,2,0,6,NO,NO,YES,1,1,6,0
+R35_L,Residential_Lawn,YES,YES,1,0,1,NO,NO,NO,1,0,0,0
+R36_G,Residential_Garden,NO,NO,0,0,0,NO,NO,NO,,,,
+R36_L,Residential_Lawn,NO,NO,0,0,0,YES,NO,NO,,,,
+R37_G,Residential_Garden,NO,YES,1,0,0,NO,NO,NO,0,0,1,0
+R37_L,Residential_Lawn,NO,NO,0,0,0,NO,NO,NO,,,,
+R38_G,Residential_Garden,YES,NO,0,0,0,NO,NO,YES,,,,
+R38_L,Residential_Lawn,NA,NA,NA,NA,NA,NA,NA,NA,,,,
+R39_G,Residential_Garden,YES,NO,0,0,0,NO,NO,NO,,,,
+R39_L,Residential_Lawn,NO,NO,0,0,0,NO,NO,NO,,,,
+R4_G,Residential_Garden,NO,NO,0,0,0,NO,NO,NO,,,,
+R4_L,Residential_Lawn,NO,NO,0,0,0,NO,NO,NO,,,,
+R40_G,Residential_Garden,NO,NO,0,0,0,NO,YES,YES,,,,
+R40_L,Residential_Lawn,NO,NO,0,0,0,NO,NO,YES,,,,
+R5_G,Residential_Garden,YES,YES,0,3,0,NO,YES,YES,2,0,0,0
+R5_L,Residential_Lawn,NO,NO,0,0,0,NO,YES,NO,,,,
+R6_G,Residential_Garden,NO,NO,0,0,0,YES,YES,YES,,,,
+R6_L,Residential_Lawn,NO,NO,0,0,0,NO,YES,NO,,,,
+R7_G,Residential_Garden,YES,YES,4,0,9,NO,NO,NO,0,8,4,0
+R7_L,Residential_Lawn,YES,NO,0,0,0,NO,NO,NO,,,,
+R8_G,Residential_Garden,YES,YES,0,0,1,NO,NO,NO,0,0,1,0
+R8_L,Residential_Lawn,NO,NO,0,0,0,YES,NO,NO,,,,
+R9_G,Residential_Garden,NO,YES,2,0,3,NO,NO,NO,1,1,3,0
+R9_L,Residential_Lawn,NO,YES,0,0,1,NO,NO,NO,0,1,0,0

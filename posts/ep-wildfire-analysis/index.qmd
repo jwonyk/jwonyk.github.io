@@ -8,7 +8,7 @@ format:
     code-fold: false
     embed-resources: true
 python: /opt/anaconda3/bin/python
-jupyter: eds220-env
+jupyter: python3
 citation:
   url: https://jwonyk.github.io/posts/ep-wildfire-analysis/
 bibliography: references.bib
