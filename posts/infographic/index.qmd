@@ -1,5 +1,5 @@
 ---
-title: "Worms!"
+title: "When Earthworms Become Invaders"
 date: 2026-03-08
 categories: [MEDS, R]
 image: worms.jpeg
@@ -13,7 +13,7 @@ citation:
   url: "https://jwonyk.github.io/posts/infographic/"
 ---
 
-## When Earthworms Become Invaders
+## Motivation Behind the Infographic
 
 Growing up in South Korea, I often watched documentaries and historical dramas that described earthworms as almost like magical helpers of the soil. Worms were seen as quiet workers that turned dry, dusty land into rich soil where crops could grow. In many cultures, earthworms are symbols of healthy land because they break down organic matter and help nutrients move through the soil.
 
@@ -29,9 +29,9 @@ Below is the final infographic summarizing what I found.
 
 ## Infographic
 
-![](figures/Infographic-draft.png){fig-align="center"}
+![](figures/Infographic-draft-final.png){fig-align="center"}
 
-This infographic has been worked initial plotting with R `ggplot` package, `Google Slides`, and `Affinity`.
+Plots were initially created using the `{ggplot2}` package in R. The infographic was assembled using Google Slides and Affinity.
 
 ## Designing the Infographic
 
@@ -45,11 +45,19 @@ The first chart shows the mean jumping worm density across different land cover 
 
 ![](figures/plot-1.png){fig-align="center"}
 
-The second visualization is a waffle-style grid showing where invasive jumping worms and European earthworms were found across sites. Each square represents a sampling location, and the colors indicate whether jumping worms, European worms, both, or neither were observed. This helps show that some landscapes may host multiple worm types, while others remain relatively unaffected.
+The second visualization includes a donut chart and a map to provide context for the study. The donut chart shows the proportion of sites where jumping worms were present, indicating they are already widespread across the surveyed locations.
+
+![](figures/plot-2.png){fig-align="center"}
+
+The third visualization is a waffle-style grid showing where invasive jumping worms and European earthworms were found across sites. Each square represents a sampling location, and the colors indicate whether jumping worms, European worms, both, or neither were observed. This helps show that some landscapes may host multiple worm types, while others remain relatively unaffected.
 
 ![](figures/plot-3B.png)
 
 Together, these visuals show both the ecological consequences and the spatial patterns of the invasion.
+
+![](figures/plot-4.png){fig-align="center"}
+
+The map shows the locations of the study sites in Madison, Wisconsin, providing geographic context for where the data were collected.
 
 ## Color, Layout, and Visual Storytelling
 
@@ -178,7 +186,7 @@ invasion_share <- worms %>%
   filter(!is.na(jw_present)) %>%
   count(jw_present) %>%
   mutate(pct = 100 * n / sum(n),
-         site_status = if_else(jw_present, "Invaded", "Not invaded")) %>%
+         site_status = if_else(jw_present, "Invaded", "Not Invaded")) %>%
   select(site_status, n, pct)
 
 # Donut chart showing invaded vs. not-invaded site proportions
@@ -188,6 +196,8 @@ p_invaded <- ggplot(invasion_share, aes(x = 2, y = pct,
   coord_polar(theta = "y") +
   xlim(0.5, 2.5) +
   theme_void() +
+  scale_fill_manual(values = c("Not Invaded" = "#6B3E26", # dark worm/soil
+                               "Invaded" = "#D9D2C5")) + # pale, depleted soil
   labs(fill = "Site Status",
        title = "Proportion of Sites Invaded by Jumping Worms") +
   theme(legend.position = "right",
@@ -234,66 +244,89 @@ p_species
 
 # One row per site with worm status counts coded by habitat
 sites <- bind_rows(
-  tibble(landcover = "Forest", 
-         status = c(rep("Both", 0), rep("JW only", 4), 
-                    rep("Euro only", 6), rep("Neither", 6))),
-  tibble(landcover = "Grassland", 
-         status = c(rep("Both", 0), rep("JW only", 0), 
-                    rep("Euro only", 7), rep("Neither", 9))),
+  tibble(landcover = "Forest",
+         status = c(rep("Both Worm Types", 0),
+                    rep("Jumping Worms Only", 4),
+                    rep("European Worms Only", 6),
+                    rep("No Worms Found", 6))),
+  tibble(landcover = "Grassland",
+         status = c(rep("Both Worm Types", 0),
+                    rep("Jumping Worms Only", 0),
+                    rep("European Worms Only", 7),
+                    rep("No Worms Found", 9))),
   tibble(landcover = "Open Space",
-         status = c(rep("Both", 2), rep("JW only", 0), 
-                    rep("Euro only", 8), rep("Neither", 4))),
-  tibble(landcover = "Residential Garden", 
-         status = c(rep("Both", 3), rep("JW only", 15),
-                    rep("Euro only", 12),rep("Neither", 9))),
+         status = c(rep("Both Worm Types", 2),
+                    rep("Jumping Worms Only", 0),
+                    rep("European Worms Only", 8),
+                    rep("No Worms Found", 4))),
+  tibble(landcover = "Residential Garden",
+         status = c(rep("Both Worm Types", 3),
+                    rep("Jumping Worms Only", 15),
+                    rep("European Worms Only", 12),
+                    rep("No Worms Found", 9))),
   tibble(landcover = "Residential Lawn",
-         status = c(rep("Both", 2), rep("JW only", 6), 
-                    rep("Euro only", 8), rep("Neither", 23)))) %>%
-  mutate(landcover = factor(landcover, # Set display order of habitats
+         status = c(rep("Both Worm Types", 2),
+                    rep("Jumping Worms Only", 6),
+                    rep("European Worms Only", 8),
+                    rep("No Worms Found", 23)))) %>%
+  mutate(landcover = factor(landcover,
                             levels = c("Forest",
                                        "Grassland",
                                        "Open Space",
                                        "Residential Garden",
-                                       "Residential Lawn"))) %>%
+                                       "Residential Lawn")),
+         status = factor(status,
+                         levels = c("Jumping Worms Only",
+                                    "European Worms Only",
+                                    "Both Worm Types",
+                                    "No Worms Found"))) %>%
   group_by(landcover) %>%
-  mutate(col = (row_number() - 1) %% 16,  # Wrapping at 16 cols
+  arrange(status, .by_group = TRUE) %>%
+  mutate(col = (row_number() - 1) %% 16,
          row = (row_number() - 1) %/% 16) %>%
   ungroup()
 
 # Compute panel heights - tiles stay square across habitats with different row n
 panel_heights <- sites %>%
   group_by(landcover) %>%
-  summarise(nrows = max(row) + 1) %>%
+  summarise(nrows = max(row) + 1, .groups = "drop") %>%
   pull(nrows)
 
 # Plot waffle chart with one facet per habitat, sized proportionally
 ggplot(sites, aes(x = col, y = -row, fill = status)) +
-  geom_tile(colour = "white", linewidth = 1.5, 
+  geom_tile(colour = "white", linewidth = 0.35,
             width = 0.9, height = 0.9) +
-  facet_wrap(~landcover, ncol = 1, 
+  facet_wrap(~landcover, ncol = 1,
              strip.position = "left", scales = "free_y") +
   force_panelsizes(rows = panel_heights) +
-  scale_fill_manual(values = c(
-    "Both"      = "#7B3294",
-    "JW only"   = "#2E7D32",
-    "Euro only" = "#F39C12",
-    "Neither"   = "#E8E5E0")) +
-  labs(title = "Where Are Invasive Jumping Worms Found?",
-       subtitle = "Each Square Represents One Site, Unranked") +
+  scale_fill_manual(values = c("Jumping Worms Only"  = "#2E7D32",
+                               "European Worms Only" = "#F39C12",
+                               "Both Worm Types"     = "#7B3294",
+                               "No Worms Found"      = "#E8E5E0"),
+                    breaks = c("Jumping Worms Only",
+                               "European Worms Only",
+                               "Both Worm Types",
+                               "No Worms Found")) +
+  labs(title = "Jumping Worms Were Found at Many Surveyed Sites",
+       subtitle = "Each Square Represents One Survey Site",
+       fill = NULL) +
   theme_void() +
-  theme(plot.title = element_text(size = 13, face = "bold",
-                                  margin = margin(b = 4)),
+  theme(plot.title = element_text(size = 13,
+                                  face = "bold",
+                                  margin = margin(b = 5)),
         plot.subtitle = element_text(size = 11,
-                                     margin = margin(b = 20)),  
-    strip.text.y.left = element_text(angle = 0, hjust = 1.0, 
-                                     vjust = 0.5, size = 9,
-                                     face = "bold", 
-                                     margin = margin(r = 8)),
-    legend.title      = element_blank(),
-    legend.position   = "right",
-    strip.placement = "outside",
-    panel.spacing     = unit(0.3, "lines"),
-    plot.margin = margin(t = 20, r = 20, b = 20, l = 40))
+                                     margin = margin(b = 16)),
+        strip.text.y.left = element_text(angle = 0,
+                                         hjust = 1,
+                                         vjust = 0.5,
+                                         size = 9,
+                                         face = "bold",
+                                         margin = margin(r = 8)),
+        legend.position = "right",
+        legend.title = element_blank(),
+        strip.placement = "outside",
+        panel.spacing = unit(0.4, "lines"),
+        plot.margin = margin(t = 20, r = 20, b = 20, l = 40))
 
 # --------------------------
 # Plot 4 — Map
