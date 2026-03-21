@@ -6,6 +6,7 @@ website:
   title: "Jay's Happy Place!"
   favicon: images/j-capybara-favicon.png
   navbar:
+    logo: images/j-capybara-favicon-48.png
     title: false
     right:
       - href: index.qmd
