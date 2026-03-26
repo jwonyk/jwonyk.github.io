@@ -5,18 +5,21 @@ project:
 website:
   title: "Jay's Happy Place!"
   favicon: images/j-capybara-favicon.png
+  drafts:
+    - about.qmd
+    - resources.qmd
   navbar:
     logo: images/j-capybara-favicon-48.png
     title: false
     right:
       - href: index.qmd
         text: Home
-      - href: about.qmd
-        text: About
+      # - href: about.qmd
+      #   text: About
       - href: posts.qmd
         text: Blog
-      - href: resources.qmd
-        text: Resources
+      # - href: resources.qmd
+      #   text: Resources
 
 format: 
   html: 
